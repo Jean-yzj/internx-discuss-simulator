@@ -3,13 +3,12 @@ import SimulatorBar from "@/components/SimulatorBar";
 import Onboarding from "@/components/Onboarding";
 import { useUserSession } from "@/lib/useUserSession";
 
-const DiscussList = dynamic(() => import("@/components/Discuss/DiscussList"), {
+const PollsList = dynamic(() => import("@/components/Discuss/PollsList"), {
     ssr: false,
 });
 
-export default function Home() {
+export default function PollsPage() {
     const session = useUserSession();
-
     if (!session.hydrated) return null;
 
     return (
@@ -20,13 +19,7 @@ export default function Home() {
                 onEditProfile={session.openEditProfile}
             />
             {session.isOnboarded ? (
-                <DiscussList
-                    profile={session.profile}
-                    industries={session.industries}
-                    onRequestEditProfile={session.openEditProfile}
-                    onPollVoted={session.recordPollVote}
-                    hasCompletedSurvey={session.hasCompletedSurvey}
-                />
+                <PollsList profile={session.profile} onPollVoted={session.recordPollVote} />
             ) : null}
             {session.showOnboarding && (
                 <Onboarding

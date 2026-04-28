@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { CATEGORIES } from "@/lib/store";
 import styles from "./DiscussList.module.css";
 import NewTopicModal from "./NewTopicModal";
+import PollCard from "./PollCard";
 
 const RELATIVE_TIME = (date) => {
     if (!date) return "";
@@ -30,11 +31,15 @@ export default function DiscussList({
     profile,
     industries,
     onRequestEditProfile,
+    onPollVoted,
+    hasCompletedSurvey,
 }) {
     const router = useRouter();
     const [topics, setTopics] = useState(null);
     const [activeCategory, setActiveCategory] = useState("all");
     const [showNewTopic, setShowNewTopic] = useState(false);
+    const [polls, setPolls] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
 
     const myIndustryIds = profile?.industries || [];
     const myIndustryParam = useMemo(() => myIndustryIds.join(","), [myIndustryIds]);
@@ -57,6 +62,53 @@ export default function DiscussList({
         setTopics(null);
         load();
     }, [activeCategory, myIndustryParam]);
+
+    // Active polls — filter by joined industries on the client too so polls
+    // immediately re-filter when industries change
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const params = new URLSearchParams();
+                if (myIndustryParam) params.set("industries", myIndustryParam);
+                const res = await fetch(`/api/discuss/polls?${params.toString()}`);
+                const json = await res.json();
+                if (!cancelled && json.ok) setPolls(json.polls.slice(0, 3));
+            } catch (err) {
+                console.error("load polls failed", err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [myIndustryParam]);
+
+    // Recommendations — re-fetch whenever profile changes
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const painPointIds = (profile?.painPoints?.painPoints || []).map((p) => p.id);
+                const pollVotes = Object.entries(profile?.pollVotes || {}).map(
+                    ([pollId, choice]) => ({ pollId, choice })
+                );
+                const res = await fetch("/api/discuss/recommendations", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        industries: myIndustryIds,
+                        painPointIds,
+                        pollVotes,
+                        limit: 6,
+                    }),
+                });
+                const json = await res.json();
+                if (!cancelled && json.ok) setRecommendations(json.topics);
+            } catch (err) {
+                console.error("recommendations failed", err);
+            }
+        })();
+        return () => { cancelled = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [myIndustryParam, profile?.painPoints?.submittedAt, JSON.stringify(profile?.pollVotes || {})]);
 
     const trending = useMemo(() => {
         if (!Array.isArray(topics) || topics.length === 0) return [];
@@ -108,6 +160,35 @@ export default function DiscussList({
                             調整訂閱的論壇
                         </button>
                     </div>
+
+                    {/* Survey CTA / completion summary */}
+                    {!hasCompletedSurvey ? (
+                        <div className={styles.surveyCta}>
+                            <div className={styles.surveyCtaIcon}>🎯</div>
+                            <div className={styles.surveyCtaBody}>
+                                <h3 className={styles.surveyCtaTitle}>1 分鐘困擾調查，幫你過濾雜訊</h3>
+                                <p className={styles.surveyCtaSubtitle}>
+                                    告訴我們你最近在煩什麼，我們把<strong>有同樣困擾的學長姐怎麼解</strong>放在這頁最上面。
+                                </p>
+                            </div>
+                            <Link href="/survey" className={styles.surveyCtaBtn}>
+                                開始調查 <i className="ri-arrow-right-line" />
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className={styles.painSummary}>
+                            <div className={styles.painSummaryEmoji}>✅</div>
+                            <div className={styles.painSummaryText}>
+                                <p className={styles.painSummaryTitle}>
+                                    你的困擾調查已完成（{profile?.painPoints?.painPoints?.length || 0} 項）
+                                </p>
+                                <p className={styles.painSummaryHelp}>下面「為你推薦」就是依照你的回答排出來的。</p>
+                            </div>
+                            <Link href="/survey" className={styles.ghostBtn}>
+                                <i className="ri-edit-2-line" /> 看結果／重填
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* My forums */}
@@ -141,6 +222,75 @@ export default function DiscussList({
                                     </div>
                                 </Link>
                             ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Active polls */}
+                {polls.length > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                <i className="ri-bar-chart-grouped-fill" style={{ color: "#7c3aed" }} /> 本週投票
+                            </h2>
+                            <Link href="/polls" className={styles.sectionHelp} style={{ color: "#7c3aed", fontWeight: 700 }}>
+                                看全部投票 →
+                            </Link>
+                        </div>
+                        <div className={styles.pollList}>
+                            {polls.map((p) => (
+                                <PollCard
+                                    key={p.id}
+                                    poll={p}
+                                    myChoice={profile?.pollVotes?.[p.id]}
+                                    userId={profile?.userId}
+                                    onVoted={onPollVoted}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Personalized recommendations */}
+                {recommendations.length > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                <i className="ri-magic-line" style={{ color: "var(--theme-color)" }} /> 為你推薦
+                            </h2>
+                            <p className={styles.sectionHelp}>
+                                依你的訂閱、困擾、投票排序
+                            </p>
+                        </div>
+                        <div className={styles.recList}>
+                            {recommendations.map((t) => {
+                                const ind = industries.find((i) => i.id === t.industry);
+                                return (
+                                    <Link key={t.id} href={`/topics/${t.id}`} className={styles.recCard}>
+                                        <div className={styles.recReasons}>
+                                            {(t.recReasons || []).map((r, idx) => (
+                                                <span key={idx} className={styles.recReason}>
+                                                    <i className="ri-sparkling-line" /> {r}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <h4 className={styles.recTitle}>{t.title}</h4>
+                                        {t.description && <p className={styles.recDesc}>{t.description}</p>}
+                                        <div className={styles.recFooter}>
+                                            {ind && (
+                                                <span
+                                                    className={`${styles.tag} ${styles.industryTag}`}
+                                                    style={{ "--accent": ind.accent }}
+                                                >
+                                                    {ind.emoji} {ind.label}
+                                                </span>
+                                            )}
+                                            <span><i className="ri-chat-3-line" /> {t.replyCount}</span>
+                                            <span><i className="ri-eye-line" /> {t.viewCount}</span>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </section>
                 )}

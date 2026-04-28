@@ -577,3 +577,164 @@
 @media (min-width: 851px) {
     .fab { display: none; }
 }
+
+/* Survey CTA banner */
+.surveyCta {
+    background: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
+    color: white;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 16px 36px rgba(124,58,237,0.28);
+    flex-wrap: wrap;
+}
+.surveyCtaIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+.surveyCtaBody {
+    flex: 1;
+    min-width: 200px;
+}
+.surveyCtaTitle {
+    margin: 0 0 4px 0;
+    font-size: 17px;
+    font-weight: 800;
+}
+.surveyCtaSubtitle {
+    margin: 0;
+    opacity: 0.92;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.surveyCtaBtn {
+    appearance: none;
+    border: none;
+    background: white;
+    color: #7c3aed;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.surveyCtaBtn:hover { transform: translateY(-1px); }
+
+/* Recommendations card (driven by /api/discuss/recommendations) */
+.recCard {
+    border: 1px solid #f1f5f9;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(0,166,232,0.04), rgba(124,58,237,0.04));
+    padding: 16px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.recCard:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(0,166,232,0.10);
+    border-color: var(--theme-color);
+}
+
+.recReasons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.recReason {
+    background: rgba(0,166,232,0.10);
+    color: var(--theme-color);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+}
+
+.recTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.recDesc {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.recFooter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #888;
+    flex-wrap: wrap;
+}
+
+.recList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+/* Poll list on home (could be 1 or 2 wide) */
+.pollList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+}
+
+/* Pain summary (mini) */
+.painSummary {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.painSummaryEmoji { font-size: 30px; }
+.painSummaryText {
+    flex: 1;
+    min-width: 150px;
+}
+.painSummaryTitle {
+    font-weight: 800;
+    color: #111;
+    font-size: 15px;
+    margin: 0 0 2px 0;
+}
+.painSummaryHelp {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+}

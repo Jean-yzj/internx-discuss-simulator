@@ -3,13 +3,12 @@ import SimulatorBar from "@/components/SimulatorBar";
 import Onboarding from "@/components/Onboarding";
 import { useUserSession } from "@/lib/useUserSession";
 
-const DiscussList = dynamic(() => import("@/components/Discuss/DiscussList"), {
+const Survey = dynamic(() => import("@/components/Discuss/Survey"), {
     ssr: false,
 });
 
-export default function Home() {
+export default function SurveyPage() {
     const session = useUserSession();
-
     if (!session.hydrated) return null;
 
     return (
@@ -20,12 +19,9 @@ export default function Home() {
                 onEditProfile={session.openEditProfile}
             />
             {session.isOnboarded ? (
-                <DiscussList
+                <Survey
                     profile={session.profile}
-                    industries={session.industries}
-                    onRequestEditProfile={session.openEditProfile}
-                    onPollVoted={session.recordPollVote}
-                    hasCompletedSurvey={session.hasCompletedSurvey}
+                    onSubmitted={session.saveSurveyResponse}
                 />
             ) : null}
             {session.showOnboarding && (

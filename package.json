@@ -1,0 +1,17 @@
+{
+  "name": "internx-discuss-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone simulator demo for the InternX 話題 (discussion) feature. Independent from the main InternX platform — uses an in-memory backend so there is no shared data.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.34",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remixicon": "4.6.0"
+  }
+}

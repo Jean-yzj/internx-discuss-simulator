@@ -1,0 +1,105 @@
+.bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    height: var(--top-bar-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logoMark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--theme-color), var(--complementary-color));
+    color: white;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+.brandName {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+}
+.brandSub {
+    font-size: 11px;
+    color: var(--muted-color);
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.simChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,166,232,0.10);
+    color: var(--theme-color);
+    border: 1px solid rgba(0,166,232,0.25);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.simDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--theme-color);
+    box-shadow: 0 0 0 4px rgba(0,166,232,0.15);
+    animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.helpBtn {
+    appearance: none;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: #555;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.helpBtn:hover {
+    background: var(--background-color-gray);
+}
+
+@media (max-width: 600px) {
+    .bar { padding: 0 14px; }
+    .brandSub { display: none; }
+    .helpBtn span { display: none; }
+}

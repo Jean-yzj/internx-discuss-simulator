@@ -18,6 +18,7 @@ export default function Home() {
                 profile={session.profile}
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
+                onSwitchRole={session.setDemoRole}
             />
             {session.isOnboarded ? (
                 <DiscussList

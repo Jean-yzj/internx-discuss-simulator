@@ -6,6 +6,7 @@ export default function NewTopicModal({
     categories,
     initialIndustry,
     defaultName,
+    profile,
     onClose,
     onCreated,
 }) {
@@ -36,6 +37,9 @@ export default function NewTopicModal({
                     industry,
                     category,
                     authorName: authorName.trim() || "匿名同學",
+                    userId: profile?.userId,
+                    badges: profile?.badges || [],
+                    brand: profile?.brand || null,
                 }),
             });
             const json = await res.json();

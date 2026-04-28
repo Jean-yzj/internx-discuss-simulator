@@ -22,6 +22,7 @@ export default function IndustryForumPage() {
                 profile={session.profile}
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
+                onSwitchRole={session.setDemoRole}
             />
             {session.isOnboarded && id ? (
                 <IndustryForum

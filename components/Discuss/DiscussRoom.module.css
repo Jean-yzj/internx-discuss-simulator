@@ -267,3 +267,159 @@
     .bubble { max-width: 92%; }
     .nameInput { flex: 0 0 90px; }
 }
+
+/* Author row with badges */
+.authorRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 4px;
+    font-size: calc(var(--font-size) / 11);
+}
+.bubbleSelf .authorRow { justify-content: flex-end; }
+.authorName { color: #555; font-weight: 700; }
+
+/* Brand-expert bubble — highlighted background */
+.bubbleBrand .bubbleContent {
+    background: linear-gradient(135deg, rgba(14,165,233,0.05), rgba(12,74,110,0.05));
+    border: 1.5px solid rgba(14,165,233,0.30);
+    box-shadow: 0 4px 12px rgba(12,74,110,0.08);
+}
+
+/* Reply action row */
+.replyActions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    align-items: center;
+    padding: 0 4px;
+}
+.bubbleSelf .replyActions { justify-content: flex-end; }
+
+.actionBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+    transition: background .12s ease, color .12s ease;
+}
+.actionBtn:hover { background: #f3f4f6; color: #111; }
+.actionBtnActive {
+    color: #dc2626;
+    font-weight: 700;
+    background: rgba(220,38,38,0.06);
+}
+.actionBtnDanger:hover { color: #dc2626; background: rgba(220,38,38,0.06); }
+
+.helpfulCount { font-weight: 700; }
+
+.deletedBubble {
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 13px;
+    padding: 6px 0;
+    text-align: center;
+}
+
+.modMenuWrap {
+    position: relative;
+    display: inline-block;
+}
+.modMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    min-width: 160px;
+    z-index: 30;
+    padding: 4px;
+    margin-top: 4px;
+}
+.modMenuItem {
+    appearance: none;
+    border: none;
+    background: white;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1f2937;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.modMenuItem:hover { background: #f3f4f6; }
+.modMenuItemDanger { color: #dc2626; }
+
+.menuBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+}
+
+/* Topic-level moderation toolbar */
+.modToolbar {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.modToolbarChip {
+    appearance: none;
+    border: 1px solid #16a34a;
+    background: rgba(22,163,74,0.08);
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.modToolbarChip:hover { background: rgba(22,163,74,0.15); }
+.modToolbarChipActive {
+    background: #16a34a;
+    color: white;
+}
+
+.lockedBanner {
+    background: rgba(220,38,38,0.08);
+    color: #b91c1c;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.pinnedTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(245,158,11,0.15);
+    color: #b45309;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    margin-right: 4px;
+}

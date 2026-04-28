@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CATEGORIES } from "@/lib/store";
+import { BadgeRow } from "@/components/Badge";
 import styles from "./DiscussList.module.css";
 import NewTopicModal from "./NewTopicModal";
 import PollCard from "./PollCard";
@@ -155,6 +156,10 @@ export default function DiscussList({
                             <i className="ri-quill-pen-line" />
                             開一個新話題
                         </button>
+                        <Link href="/experts" className={styles.ghostBtn} style={{ textDecoration: "none" }}>
+                            <i className="ri-vip-crown-line" />
+                            看認證專家
+                        </Link>
                         <button className={styles.ghostBtn} onClick={onRequestEditProfile} type="button">
                             <i className="ri-equalizer-2-line" />
                             調整訂閱的論壇
@@ -419,6 +424,14 @@ export default function DiscussList({
                                             <span className={styles.metaItem}>
                                                 <i className="ri-user-line" /> {t.authorName}
                                             </span>
+                                            {Array.isArray(t.authorBadges) && t.authorBadges.length > 0 && (
+                                                <BadgeRow
+                                                    badges={t.authorBadges}
+                                                    brand={t.authorBrand}
+                                                    size="small"
+                                                    limit={2}
+                                                />
+                                            )}
                                         </div>
                                     </div>
                                 </Link>
@@ -468,6 +481,7 @@ export default function DiscussList({
                     categories={CATEGORIES}
                     initialIndustry={myIndustryIds[0] || industries[0]?.id}
                     defaultName={profile?.displayName}
+                    profile={profile}
                     onClose={() => setShowNewTopic(false)}
                     onCreated={(topic) => {
                         setShowNewTopic(false);

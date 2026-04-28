@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CATEGORIES } from "@/lib/store";
+import { BadgeRow } from "@/components/Badge";
 import styles from "./IndustryForum.module.css";
 import NewTopicModal from "./NewTopicModal";
 
@@ -25,6 +26,60 @@ function avatarInitial(name) {
     return name.trim().charAt(0) || "💬";
 }
 
+function ExpertRow({ user }) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: 10,
+                padding: "10px 0",
+                alignItems: "flex-start",
+                borderBottom: "1px solid #f1f5f9",
+            }}
+        >
+            <div
+                style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #00a6e8, #ffb700)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 800,
+                    fontSize: 14,
+                    flexShrink: 0,
+                }}
+            >
+                {user.avatarSeed || (user.displayName?.charAt(0) || "?")}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                    <strong style={{ color: "#111", fontSize: 14 }}>{user.displayName}</strong>
+                    <BadgeRow badges={user.badges} brand={user.brand} size="small" limit={2} />
+                </div>
+                {user.bio && (
+                    <p
+                        style={{
+                            margin: "4px 0 0",
+                            fontSize: 12,
+                            color: "#6b7280",
+                            lineHeight: 1.5,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                        }}
+                    >
+                        {user.bio}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function IndustryForum({
     industries,
     industryId,
@@ -38,6 +93,8 @@ export default function IndustryForum({
     const [topics, setTopics] = useState(null);
     const [activeCategory, setActiveCategory] = useState("all");
     const [showNewTopic, setShowNewTopic] = useState(false);
+    const [moderators, setModerators] = useState([]);
+    const [forumExperts, setForumExperts] = useState([]);
 
     async function load() {
         if (!industryId) return;
@@ -58,6 +115,39 @@ export default function IndustryForum({
         setTopics(null);
         load();
     }, [industryId, activeCategory]);
+
+    // Load moderators + experts for this industry
+    useEffect(() => {
+        if (!industryId) return;
+        let cancelled = false;
+        (async () => {
+            try {
+                const [modRes, allRes] = await Promise.all([
+                    fetch(`/api/discuss/users?moderatesIndustry=${industryId}`),
+                    fetch(`/api/discuss/users`),
+                ]);
+                const [modJson, allJson] = await Promise.all([modRes.json(), allRes.json()]);
+                if (cancelled) return;
+                if (modJson.ok) setModerators(modJson.users);
+                if (allJson.ok) {
+                    // Filter brand experts whose brand mentions this industry, plus
+                    // verified-creators that moderate or are tagged for this industry.
+                    // Simpler heuristic: show users whose brand exists OR whose
+                    // bio mentions the industry's label, OR who moderates it.
+                    const expertsList = allJson.users.filter(
+                        (u) =>
+                            u.badges?.includes("brand-expert") ||
+                            u.badges?.includes("industry-expert") ||
+                            u.badges?.includes("verified-creator")
+                    );
+                    setForumExperts(expertsList);
+                }
+            } catch (err) {
+                console.error("load mods/experts failed", err);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [industryId]);
 
     const trending = useMemo(() => {
         if (!Array.isArray(topics) || topics.length === 0) return [];
@@ -217,6 +307,53 @@ export default function IndustryForum({
                     </div>
                 </div>
 
+                {/* Moderators + experts in this industry */}
+                {(moderators.length > 0 || forumExperts.length > 0) && (
+                    <section className={styles.section}>
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                                gap: 14,
+                            }}
+                        >
+                            {moderators.length > 0 && (
+                                <div className={styles.trendingCard}>
+                                    <h3>
+                                        <i className="ri-shield-user-line" style={{ color: "#16a34a" }} /> 本版版主
+                                    </h3>
+                                    {moderators.map((u) => (
+                                        <ExpertRow key={u.userId} user={u} />
+                                    ))}
+                                </div>
+                            )}
+                            {forumExperts.length > 0 && (
+                                <div className={styles.trendingCard}>
+                                    <h3>
+                                        <i className="ri-vip-crown-line" style={{ color: "#0ea5e9" }} /> 本站認證專家
+                                    </h3>
+                                    {forumExperts.slice(0, 5).map((u) => (
+                                        <ExpertRow key={u.userId} user={u} />
+                                    ))}
+                                    <Link
+                                        href="/experts"
+                                        style={{
+                                            display: "block",
+                                            color: "var(--accent, var(--theme-color))",
+                                            fontSize: 13,
+                                            fontWeight: 700,
+                                            marginTop: 8,
+                                            textDecoration: "none",
+                                        }}
+                                    >
+                                        看全部認證專家 →
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>{industry.label}的所有話題</h2>
@@ -285,6 +422,14 @@ export default function IndustryForum({
                                         <span><i className="ri-chat-3-line" /> {t.replyCount}</span>
                                         <span><i className="ri-time-line" /> {RELATIVE_TIME(t.lastActivityAt)}</span>
                                         <span><i className="ri-user-line" /> {t.authorName}</span>
+                                        {Array.isArray(t.authorBadges) && t.authorBadges.length > 0 && (
+                                            <BadgeRow
+                                                badges={t.authorBadges}
+                                                brand={t.authorBrand}
+                                                size="small"
+                                                limit={2}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </Link>
@@ -299,6 +444,7 @@ export default function IndustryForum({
                     categories={CATEGORIES}
                     initialIndustry={industry.id}
                     defaultName={profile?.displayName}
+                    profile={profile}
                     onClose={() => setShowNewTopic(false)}
                     onCreated={(topic) => {
                         setShowNewTopic(false);

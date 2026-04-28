@@ -17,6 +17,7 @@ export default function PollsPage() {
                 profile={session.profile}
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
+                onSwitchRole={session.setDemoRole}
             />
             {session.isOnboarded ? (
                 <PollsList profile={session.profile} onPollVoted={session.recordPollVote} />

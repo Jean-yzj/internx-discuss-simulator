@@ -22,6 +22,7 @@ export default function TopicPage() {
                 profile={session.profile}
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
+                onSwitchRole={session.setDemoRole}
             />
             {session.isOnboarded && normalized ? (
                 <DiscussRoom topicId={normalized} />

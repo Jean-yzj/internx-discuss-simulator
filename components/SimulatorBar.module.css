@@ -51,7 +51,7 @@
 .right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .simChip {
@@ -141,10 +141,111 @@
     background: var(--background-color-gray);
 }
 
+/* Role switcher pill — looks like a "Demo" badge */
+.rolePill {
+    appearance: none;
+    border: 1px dashed #c7d2fe;
+    background: rgba(99,102,241,0.06);
+    color: #4338ca;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    transition: background .15s ease;
+}
+.rolePill:hover {
+    background: rgba(99,102,241,0.12);
+}
+
+.roleMenu {
+    position: absolute;
+    top: calc(var(--top-bar-height) + 8px);
+    right: 16px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.16);
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+    z-index: 105;
+}
+
+.roleMenuHeader {
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.roleMenuTitle {
+    font-size: 14px;
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+.roleMenuHelp {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.roleItem {
+    appearance: none;
+    border: none;
+    background: white;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: inherit;
+    transition: background .12s ease;
+    border-bottom: 1px solid #f8fafc;
+}
+.roleItem:last-child { border-bottom: none; }
+.roleItem:hover { background: #f9fafb; }
+
+.roleItemActive {
+    background: rgba(0,166,232,0.06);
+}
+
+.roleEmoji { font-size: 20px; line-height: 1; }
+.roleBody { flex: 1; min-width: 0; }
+.roleName {
+    font-weight: 800;
+    color: #111;
+    font-size: 14px;
+}
+.roleDesc {
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 2px;
+    line-height: 1.5;
+}
+.roleCheck {
+    color: var(--theme-color);
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.menuBackdrop {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 104;
+}
+
 @media (max-width: 600px) {
     .bar { padding: 0 14px; }
     .brandSub { display: none; }
     .helpBtn span { display: none; }
     .userMeta { display: none; }
     .userPill { padding: 4px 6px; }
+    .rolePill span:not(.roleEmoji) { display: none; }
 }

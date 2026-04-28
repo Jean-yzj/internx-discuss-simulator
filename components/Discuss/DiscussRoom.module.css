@@ -334,6 +334,117 @@
 
 .helpfulCount { font-weight: 700; }
 
+/* Reactions row */
+.reactionsRow {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    padding: 0 4px;
+}
+.bubbleSelf .reactionsRow { justify-content: flex-end; }
+
+.reactionChip {
+    appearance: none;
+    border: 1px solid #e5e5e5;
+    background: white;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.12s ease;
+    font-family: inherit;
+    color: #555;
+}
+.reactionChip:hover { border-color: var(--theme-color); background: var(--theme-white); }
+.reactionChipActive {
+    background: var(--theme-white);
+    border-color: var(--theme-color);
+    color: var(--theme-color);
+    font-weight: 600;
+}
+.reactionEmoji { font-size: 14px; line-height: 1; }
+.reactionCount { font-size: 11px; }
+
+.reactionPicker {
+    position: absolute;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+    display: flex;
+    gap: 2px;
+    z-index: 30;
+}
+.reactionPickerBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s;
+}
+.reactionPickerBtn:hover { background: var(--theme-white); }
+
+.editedTag {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-left: 4px;
+    font-style: italic;
+}
+
+.editArea {
+    width: 100%;
+    border: 1px solid var(--theme-color);
+    border-radius: var(--border-radius);
+    padding: 8px 10px;
+    font-size: calc(var(--font-size) / 8.5);
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 60px;
+    background: white;
+    box-sizing: border-box;
+    color: #1a1a1a;
+}
+.editArea:focus { outline: 2px solid var(--theme-color); outline-offset: -1px; }
+
+.editActions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+.editBtn {
+    appearance: none;
+    border: 1px solid #999;
+    background: white;
+    color: #555;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+}
+.editBtn:hover { background: #f7f7f7; }
+.editBtnPrimary {
+    background: var(--theme-color);
+    border-color: var(--theme-color);
+    color: white;
+}
+.editBtnPrimary:hover { background: var(--theme-color-dark); }
+
 .deletedBubble {
     color: #9ca3af;
     font-style: italic;

@@ -43,6 +43,9 @@ export default function DiscussList({
     const [polls, setPolls] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
 
+    const [sortBy, setSortBy] = useState("latest"); // 'latest' | 'replies' | 'views'
+    const [expertOnly, setExpertOnly] = useState(false);
+
     const myIndustryIds = profile?.industries || [];
     const myIndustryParam = useMemo(() => myIndustryIds.join(","), [myIndustryIds]);
 
@@ -405,7 +408,53 @@ export default function DiscussList({
                 <section className={styles.section} id="latest">
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>最新話題</h2>
-                        <p className={styles.sectionHelp}>來自你訂閱的論壇</p>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                style={{
+                                    appearance: "none",
+                                    border: "1px solid #e5e5e5",
+                                    background: "white",
+                                    color: "#555",
+                                    padding: "6px 28px 6px 12px",
+                                    borderRadius: "var(--border-radius)",
+                                    fontSize: 13,
+                                    fontFamily: "inherit",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                <option value="latest">最新活動</option>
+                                <option value="replies">最多回覆</option>
+                                <option value="views">最多瀏覽</option>
+                            </select>
+                            <label
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 6,
+                                    padding: "6px 12px",
+                                    border: "1px solid",
+                                    borderColor: expertOnly ? "var(--theme-color)" : "#e5e5e5",
+                                    background: expertOnly ? "var(--theme-white)" : "white",
+                                    color: expertOnly ? "var(--theme-color)" : "#555",
+                                    borderRadius: "var(--border-radius)",
+                                    fontSize: 13,
+                                    fontWeight: expertOnly ? 600 : 500,
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={expertOnly}
+                                    onChange={(e) => setExpertOnly(e.target.checked)}
+                                    style={{ display: "none" }}
+                                />
+                                <i className={expertOnly ? "ri-vip-crown-fill" : "ri-vip-crown-line"} />
+                                只看專家
+                            </label>
+                        </div>
                     </div>
                     <div className={styles.categoryRow}>
                         {CATEGORIES.map((c) => (
@@ -445,7 +494,21 @@ export default function DiscussList({
                                 </button>
                             </div>
                         )}
-                        {Array.isArray(topics) && topics.map((t) => {
+                        {Array.isArray(topics) && topics
+                            .filter((t) => {
+                                if (!expertOnly) return true;
+                                return Array.isArray(t.authorBadges) && t.authorBadges.some((b) =>
+                                    ["brand-expert", "industry-expert", "verified-creator", "kol"].includes(b)
+                                );
+                            })
+                            .slice()
+                            .sort((a, b) => {
+                                if (sortBy === "replies") return (b.replyCount || 0) - (a.replyCount || 0);
+                                if (sortBy === "views") return (b.viewCount || 0) - (a.viewCount || 0);
+                                // latest (default already sorted by lastActivityAt desc from API)
+                                return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime();
+                            })
+                            .map((t) => {
                             const ind = industries.find((i) => i.id === t.industry);
                             return (
                                 <Link key={t.id} href={`/topics/${t.id}`} className={styles.topicCard}>

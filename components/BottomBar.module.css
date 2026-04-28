@@ -1,0 +1,72 @@
+/*
+ * Mobile bottom navigation — mirrors InternX BottomBar.
+ * Fixed bottom, 5 tabs, only shown on screens <= 850px.
+ */
+.bar {
+    display: none;
+}
+
+@media (max-width: 850px) {
+    .bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: white;
+        border-top: 1px solid #e5e5e5;
+        z-index: 1000;
+        align-items: stretch;
+    }
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s;
+    padding-top: 2px;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+}
+.tab:hover { color: var(--theme-color); }
+.tab i { font-size: 22px; line-height: 1; }
+
+.tabActive {
+    color: var(--theme-color);
+}
+.tabActive i {
+    /* swap to filled icon visually if your remix-icon includes both —
+       we toggle classes instead in JSX */
+}
+
+.tabBadge {
+    position: absolute;
+    top: 6px;
+    right: 22%;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #d80f0f;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* Note: pages don't need extra padding-bottom; the BottomBar is fixed
+   over content and pages already have their own padding-bottom: 80px. */

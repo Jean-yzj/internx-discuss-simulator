@@ -3,12 +3,13 @@ import "remixicon/fonts/remixicon.css";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Footer from "@/components/Footer";
+import BottomBar from "@/components/BottomBar";
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
-    // Hide footer on the chat-style topic detail (the page already takes
-    // 100dvh and has its own composer at the bottom).
-    const showFooter = !router.pathname.startsWith("/topics/");
+    // Hide footer + bottom bar on the chat-style topic detail (the page
+    // already takes 100dvh and has its own composer at the bottom).
+    const showChrome = !router.pathname.startsWith("/topics/");
 
     return (
         <>
@@ -20,7 +21,8 @@ export default function App({ Component, pageProps }) {
                 <link rel="icon" href="/internx-logo-square.svg" />
             </Head>
             <Component {...pageProps} />
-            {showFooter && <Footer />}
+            {showChrome && <Footer />}
+            {showChrome && <BottomBar />}
         </>
     );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CATEGORIES, INDUSTRIES } from "@/lib/store";
+import { CATEGORIES, INDUSTRIES, REACTION_EMOJIS } from "@/lib/store";
 import { loadProfile, saveProfile, isModeratorOf } from "@/lib/profile";
 import { BadgeRow, BrandCallout } from "@/components/Badge";
 import UserPopover from "@/components/UserPopover";
@@ -47,7 +47,7 @@ function dayLabel(d) {
     return x.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric" });
 }
 
-export default function DiscussRoom({ topicId, onRecordActivity }) {
+export default function DiscussRoom({ topicId, onRecordActivity, onToggleSave, isSaved }) {
     const router = useRouter();
     const [topic, setTopic] = useState(undefined); // undefined = loading, null = not found
     const [replies, setReplies] = useState([]);
@@ -56,6 +56,9 @@ export default function DiscussRoom({ topicId, onRecordActivity }) {
     const [profile, setProfile] = useState(null);
     const [helpfulVotes, setHelpfulVotes] = useState({}); // replyId -> bool (this client voted)
     const [openMenuId, setOpenMenuId] = useState(null);
+    const [pickerForReplyId, setPickerForReplyId] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [editDraft, setEditDraft] = useState("");
     const feedRef = useRef(null);
 
     useEffect(() => {
@@ -194,6 +197,85 @@ export default function DiscussRoom({ topicId, onRecordActivity }) {
         }
     }
 
+    async function toggleReaction(replyId, emoji) {
+        if (!profile?.userId) return;
+        // Optimistic — just optimistically update local list of reactions
+        setReplies((curr) =>
+            curr.map((r) => {
+                if (r.id !== replyId) return r;
+                const reactions = { ...(r.reactions || {}) };
+                const list = (reactions[emoji] || []).slice();
+                const idx = list.indexOf(profile.userId);
+                if (idx >= 0) list.splice(idx, 1);
+                else list.push(profile.userId);
+                if (list.length === 0) delete reactions[emoji];
+                else reactions[emoji] = list;
+                return { ...r, reactions };
+            })
+        );
+        setPickerForReplyId(null);
+        try {
+            const res = await fetch(`/api/discuss/replies/${replyId}/react`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: profile.userId, emoji }),
+            });
+            const json = await res.json();
+            if (json.ok) {
+                setReplies((curr) => curr.map((r) => (r.id === replyId ? { ...r, reactions: json.reactions } : r)));
+            }
+        } catch (err) { console.error(err); }
+    }
+
+    function startEdit(reply) {
+        setEditingId(reply.id);
+        setEditDraft(reply.content);
+        setOpenMenuId(null);
+    }
+
+    async function saveEdit(replyId) {
+        const content = (editDraft || "").trim();
+        if (!content) return;
+        try {
+            const res = await fetch(`/api/discuss/replies/${replyId}/edit`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: profile?.userId, content }),
+            });
+            const json = await res.json();
+            if (json.ok) {
+                setReplies((curr) => curr.map((r) => (r.id === replyId ? { ...r, content: json.reply.content, editedAt: json.reply.editedAt } : r)));
+                setEditingId(null);
+                setEditDraft("");
+            } else {
+                alert(json.error || "編輯失敗");
+            }
+        } catch (err) { console.error(err); }
+    }
+
+    async function deleteOwnReply(replyId) {
+        if (!profile?.userId) return;
+        if (!window.confirm("確定要刪除你這則留言？")) return;
+        try {
+            const res = await fetch(`/api/discuss/replies/${replyId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: profile.userId,
+                    badges: profile.badges || [],
+                    moderates: profile.moderates || [],
+                }),
+            });
+            const json = await res.json();
+            if (json.ok) {
+                setReplies((curr) => curr.filter((r) => r.id !== replyId));
+            } else {
+                alert(json.error || "刪除失敗");
+            }
+        } catch (err) { console.error(err); }
+        finally { setOpenMenuId(null); }
+    }
+
     async function reportReply(replyId) {
         if (!profile?.userId) return;
         const reason = window.prompt("檢舉原因（簡短說明，會送給版主）", "");
@@ -327,6 +409,36 @@ export default function DiscussRoom({ topicId, onRecordActivity }) {
                         <span><i className="ri-chat-3-line" /> {topic.replyCount} 則回覆</span>
                         <span><i className="ri-eye-line" /> {topic.viewCount} 次瀏覽</span>
                         <span><i className="ri-user-line" /> 由 {topic.authorName} 發起</span>
+                        {onToggleSave && (
+                            <button
+                                type="button"
+                                onClick={() => onToggleSave({
+                                    id: topic.id,
+                                    title: topic.title,
+                                    industry: topic.industry,
+                                })}
+                                style={{
+                                    appearance: "none",
+                                    border: "1px solid",
+                                    borderColor: isSaved ? "var(--theme-color)" : "#e5e5e5",
+                                    background: isSaved ? "var(--theme-white)" : "white",
+                                    color: isSaved ? "var(--theme-color)" : "#555",
+                                    padding: "3px 10px",
+                                    borderRadius: 999,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                    fontFamily: "inherit",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                }}
+                                title={isSaved ? "已收藏" : "收藏這個話題"}
+                            >
+                                <i className={isSaved ? "ri-bookmark-fill" : "ri-bookmark-line"} />
+                                {isSaved ? "已收藏" : "收藏"}
+                            </button>
+                        )}
                     </div>
                     {canMod && (
                         <div className={styles.modToolbar}>
@@ -422,7 +534,55 @@ export default function DiscussRoom({ topicId, onRecordActivity }) {
                                         )}
                                     </div>
                                     {r.authorBrand && <BrandCallout brand={r.authorBrand} />}
-                                    <div className={styles.bubbleContent}>{r.content}</div>
+                                    {editingId === r.id ? (
+                                        <div style={{ width: "100%" }}>
+                                            <textarea
+                                                className={styles.editArea}
+                                                value={editDraft}
+                                                onChange={(e) => setEditDraft(e.target.value)}
+                                                autoFocus
+                                            />
+                                            <div className={styles.editActions}>
+                                                <button
+                                                    type="button"
+                                                    className={styles.editBtn}
+                                                    onClick={() => { setEditingId(null); setEditDraft(""); }}
+                                                >取消</button>
+                                                <button
+                                                    type="button"
+                                                    className={`${styles.editBtn} ${styles.editBtnPrimary}`}
+                                                    onClick={() => saveEdit(r.id)}
+                                                    disabled={!editDraft.trim()}
+                                                >儲存</button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.bubbleContent}>
+                                            {r.content}
+                                            {r.editedAt && <span className={styles.editedTag}>（已編輯）</span>}
+                                        </div>
+                                    )}
+                                    {/* Existing reactions row */}
+                                    {r.reactions && Object.keys(r.reactions).length > 0 && (
+                                        <div className={styles.reactionsRow}>
+                                            {Object.entries(r.reactions).map(([emoji, voters]) => {
+                                                if (!voters || voters.length === 0) return null;
+                                                const mine = profile?.userId && voters.includes(profile.userId);
+                                                return (
+                                                    <button
+                                                        key={emoji}
+                                                        type="button"
+                                                        className={`${styles.reactionChip} ${mine ? styles.reactionChipActive : ""}`}
+                                                        onClick={() => toggleReaction(r.id, emoji)}
+                                                        title={`${voters.length} 個反應`}
+                                                    >
+                                                        <span className={styles.reactionEmoji}>{emoji}</span>
+                                                        <span className={styles.reactionCount}>{voters.length}</span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                     <div className={styles.replyActions}>
                                         <button
                                             type="button"
@@ -434,42 +594,87 @@ export default function DiscussRoom({ topicId, onRecordActivity }) {
                                             <span className={styles.helpfulCount}>{r.helpfulCount || 0}</span>
                                             <span style={{ marginLeft: 2 }}>有幫助</span>
                                         </button>
-                                        <span style={{ color: "#9ca3af", fontSize: 11 }}>{formatTime(r.createdAt)}</span>
-                                        {!self && (
-                                            <div className={styles.modMenuWrap}>
-                                                <button
-                                                    type="button"
-                                                    className={styles.actionBtn}
-                                                    onClick={() => setOpenMenuId(openMenuId === r.id ? null : r.id)}
-                                                    aria-label="更多"
-                                                >
-                                                    <i className="ri-more-line" />
-                                                </button>
-                                                {openMenuId === r.id && (
-                                                    <>
-                                                        <div className={styles.menuBackdrop} onClick={() => setOpenMenuId(null)} />
-                                                        <div className={styles.modMenu}>
+                                        {/* Reaction picker trigger */}
+                                        <div className={styles.modMenuWrap}>
+                                            <button
+                                                type="button"
+                                                className={styles.actionBtn}
+                                                onClick={() => setPickerForReplyId(pickerForReplyId === r.id ? null : r.id)}
+                                                title="加表情"
+                                            >
+                                                <i className="ri-emotion-line" />
+                                            </button>
+                                            {pickerForReplyId === r.id && (
+                                                <>
+                                                    <div className={styles.menuBackdrop} onClick={() => setPickerForReplyId(null)} />
+                                                    <div className={styles.reactionPicker}>
+                                                        {REACTION_EMOJIS.map((emoji) => (
                                                             <button
+                                                                key={emoji}
                                                                 type="button"
-                                                                className={styles.modMenuItem}
-                                                                onClick={() => reportReply(r.id)}
-                                                            >
-                                                                <i className="ri-flag-line" /> 檢舉
-                                                            </button>
-                                                            {canMod && (
+                                                                className={styles.reactionPickerBtn}
+                                                                onClick={() => toggleReaction(r.id, emoji)}
+                                                            >{emoji}</button>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                        <span style={{ color: "#9ca3af", fontSize: 11 }}>{formatTime(r.createdAt)}</span>
+                                        <div className={styles.modMenuWrap}>
+                                            <button
+                                                type="button"
+                                                className={styles.actionBtn}
+                                                onClick={() => setOpenMenuId(openMenuId === r.id ? null : r.id)}
+                                                aria-label="更多"
+                                            >
+                                                <i className="ri-more-line" />
+                                            </button>
+                                            {openMenuId === r.id && (
+                                                <>
+                                                    <div className={styles.menuBackdrop} onClick={() => setOpenMenuId(null)} />
+                                                    <div className={styles.modMenu}>
+                                                        {self ? (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    className={styles.modMenuItem}
+                                                                    onClick={() => startEdit(r)}
+                                                                >
+                                                                    <i className="ri-edit-line" /> 編輯
+                                                                </button>
                                                                 <button
                                                                     type="button"
                                                                     className={`${styles.modMenuItem} ${styles.modMenuItemDanger}`}
-                                                                    onClick={() => deleteReply(r.id)}
+                                                                    onClick={() => deleteOwnReply(r.id)}
                                                                 >
-                                                                    <i className="ri-delete-bin-line" /> 版主刪除
+                                                                    <i className="ri-delete-bin-line" /> 刪除
                                                                 </button>
-                                                            )}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    className={styles.modMenuItem}
+                                                                    onClick={() => reportReply(r.id)}
+                                                                >
+                                                                    <i className="ri-flag-line" /> 檢舉
+                                                                </button>
+                                                                {canMod && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`${styles.modMenuItem} ${styles.modMenuItemDanger}`}
+                                                                        onClick={() => deleteReply(r.id)}
+                                                                    >
+                                                                        <i className="ri-delete-bin-line" /> 版主刪除
+                                                                    </button>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

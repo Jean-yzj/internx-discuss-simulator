@@ -1,0 +1,265 @@
+.page {
+    width: 100%;
+    min-height: calc(100vh - var(--top-bar-height));
+    background: var(--background-color-blank);
+    padding-bottom: 80px;
+}
+
+/*
+ * Brand hero — full-color band keyed off the brand's accent color.
+ * This is the only place we keep a dramatic full-color hero, because
+ * it's the brand's marketing real estate (e.g. 航拓).
+ */
+.hero {
+    background:
+        linear-gradient(135deg, var(--brand-color, #1f2937) 0%, var(--brand-accent, #3b82f6) 100%);
+    color: white;
+    padding: 48px 0 60px;
+    position: relative;
+}
+
+.heroInner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.crumbs {
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+.crumbs a { color: white; text-decoration: none; opacity: 0.85; }
+.crumbs a:hover { opacity: 1; text-decoration: underline; }
+
+.heroTop {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.brandLogo {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--border-radius);
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.brandKind {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    margin-bottom: 4px;
+}
+
+.brandName {
+    margin: 0;
+    font-size: calc(var(--font-size) / 3.6);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.brandTagline {
+    margin: 6px 0 0;
+    font-size: calc(var(--font-size) / 8);
+    opacity: 0.92;
+    line-height: 1.5;
+}
+
+.brandDesc {
+    margin: 18px 0 0;
+    line-height: 1.7;
+    font-size: 15px;
+    opacity: 0.96;
+    max-width: 760px;
+}
+
+.heroActions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.actionPrimary {
+    appearance: none;
+    border: 1px solid white;
+    background: white;
+    color: var(--brand-color, #1f2937);
+    padding: 0 18px;
+    height: 42px;
+    line-height: 1;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    transition: background 0.15s;
+}
+.actionPrimary:hover { background: rgba(255,255,255,0.9); }
+
+.actionGhost {
+    appearance: none;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.10);
+    color: white;
+    padding: 0 16px;
+    height: 42px;
+    line-height: 1;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.actionGhost:hover { background: rgba(255,255,255,0.18); }
+
+.body {
+    max-width: 1100px;
+    margin: 32px auto 0;
+    padding: 0 20px;
+}
+
+.section { margin-top: 28px; }
+.sectionTitle {
+    font-size: calc(var(--font-size) / 5.5);
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 12px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expertsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.expertCard {
+    border: 1px solid #e5e5e5;
+    border-radius: var(--border-radius);
+    background: white;
+    padding: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+.expertCard::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--brand-color, var(--theme-color));
+}
+.expertCard:hover { border-color: var(--brand-color, var(--theme-color)); background: #fafcff; }
+
+.expertHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+.expertAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--theme-white);
+    color: var(--theme-color);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.expertName { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+.expertRole { font-size: 12px; color: var(--muted-color); }
+.expertBio {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.expertStats {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--muted-color);
+}
+
+.recentList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.recentItem {
+    border: 1px solid #e5e5e5;
+    border-radius: var(--border-radius);
+    background: white;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+}
+.recentItem:hover { border-color: var(--theme-color); background: #fafcff; }
+.recentItemTitle { font-size: 14px; font-weight: 600; color: #1a1a1a; margin: 0; }
+.recentItemSnippet {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.recentItemMeta {
+    margin-top: 4px;
+    display: inline-flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--muted-color);
+}
+
+.empty {
+    border: 1px dashed #e5e5e5;
+    border-radius: var(--border-radius);
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--muted-color);
+}
+
+.notFound {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted-color);
+}

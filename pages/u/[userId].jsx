@@ -4,15 +4,15 @@ import SimulatorBar from "@/components/SimulatorBar";
 import Onboarding from "@/components/Onboarding";
 import { useUserSession } from "@/lib/useUserSession";
 
-const DiscussRoom = dynamic(() => import("@/components/Discuss/DiscussRoom"), {
+const UserProfile = dynamic(() => import("@/components/Discuss/UserProfile"), {
     ssr: false,
 });
 
-export default function TopicPage() {
+export default function UserProfilePage() {
     const router = useRouter();
     const session = useUserSession();
-    const { id } = router.query;
-    const normalized = Array.isArray(id) ? id[0] : id;
+    const { userId } = router.query;
+    const id = Array.isArray(userId) ? userId[0] : userId;
 
     if (!session.hydrated) return null;
 
@@ -26,14 +26,7 @@ export default function TopicPage() {
                 notifications={session.notifications}
                 onMarkNotificationsRead={session.markNotificationsRead}
             />
-            {session.isOnboarded && normalized ? (
-                <DiscussRoom
-                    topicId={normalized}
-                    onRecordActivity={session.recordActivity}
-                    onToggleSave={session.toggleSaveTopic}
-                    isSaved={(session.profile?.savedTopics || []).some((s) => s.id === normalized)}
-                />
-            ) : null}
+            {session.isOnboarded && id ? <UserProfile userId={id} /> : null}
             {session.showOnboarding && (
                 <Onboarding
                     initialProfile={session.profile}

@@ -122,13 +122,32 @@ export default function UserPopover({
                         )}
 
                         <div className={styles.actions}>
-                            <Link
-                                href="/experts"
-                                className={`${styles.linkBtn} ${user?.brand ? styles.linkBtnPrimary : ""}`}
-                                onClick={() => setOpen(false)}
-                            >
-                                {user?.brand ? "看品牌頁" : "看認證專家"} <i className="ri-arrow-right-line" />
-                            </Link>
+                            {user?.userId ? (
+                                <Link
+                                    href={`/u/${user.userId}`}
+                                    className={`${styles.linkBtn} ${styles.linkBtnPrimary}`}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    看個人頁 <i className="ri-arrow-right-line" />
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/experts"
+                                    className={styles.linkBtn}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    看認證專家 <i className="ri-arrow-right-line" />
+                                </Link>
+                            )}
+                            {user?.brand && (
+                                <Link
+                                    href={`/brands/${user.brand.brandId}`}
+                                    className={styles.linkBtn}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    看品牌頁
+                                </Link>
+                            )}
                         </div>
 
                         {!user && (

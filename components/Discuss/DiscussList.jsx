@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { CATEGORIES } from "@/lib/store";
 import styles from "./DiscussList.module.css";
+import NewTopicModal from "./NewTopicModal";
 
 const RELATIVE_TIME = (date) => {
     if (!date) return "";
@@ -25,15 +26,25 @@ function avatarInitial(name) {
     return name.trim().charAt(0) || "💬";
 }
 
-export default function DiscussList() {
+export default function DiscussList({
+    profile,
+    industries,
+    onRequestEditProfile,
+}) {
     const router = useRouter();
     const [topics, setTopics] = useState(null);
     const [activeCategory, setActiveCategory] = useState("all");
     const [showNewTopic, setShowNewTopic] = useState(false);
 
+    const myIndustryIds = profile?.industries || [];
+    const myIndustryParam = useMemo(() => myIndustryIds.join(","), [myIndustryIds]);
+
     async function load() {
         try {
-            const res = await fetch(`/api/discuss/topics?category=${encodeURIComponent(activeCategory)}`);
+            const params = new URLSearchParams();
+            if (myIndustryParam) params.set("industries", myIndustryParam);
+            if (activeCategory) params.set("category", activeCategory);
+            const res = await fetch(`/api/discuss/topics?${params.toString()}`);
             const json = await res.json();
             if (json.ok) setTopics(json.topics);
         } catch (err) {
@@ -45,7 +56,7 @@ export default function DiscussList() {
     useEffect(() => {
         setTopics(null);
         load();
-    }, [activeCategory]);
+    }, [activeCategory, myIndustryParam]);
 
     const trending = useMemo(() => {
         if (!Array.isArray(topics) || topics.length === 0) return [];
@@ -58,50 +69,74 @@ export default function DiscussList() {
             .slice(0, 4);
     }, [topics]);
 
+    const myIndustries = useMemo(
+        () => industries.filter((i) => myIndustryIds.includes(i.id)),
+        [industries, myIndustryIds]
+    );
+    const otherIndustries = useMemo(
+        () => industries.filter((i) => !myIndustryIds.includes(i.id)),
+        [industries, myIndustryIds]
+    );
+
+    const greeting = useMemo(() => {
+        const hr = new Date().getHours();
+        if (hr < 5) return "深夜好";
+        if (hr < 11) return "早安";
+        if (hr < 14) return "中午好";
+        if (hr < 18) return "下午好";
+        return "晚安";
+    }, []);
+
     return (
         <div className={styles.page}>
             <div className={styles.inner}>
                 <div className={styles.hero}>
+                    <p className={styles.greeting}>{greeting}，{profile?.displayName || "同學"}</p>
                     <h1 className={styles.heroTitle}>
-                        討論話題<span className={styles.heroAccent}>．</span>
+                        你訂閱的<span className={styles.heroAccent}>{myIndustries.length}</span>個論壇
                     </h1>
                     <p className={styles.heroSubtitle}>
-                        看看大家最近在聊什麼，找到跟你有同樣困惑的人，留言一起聊聊。
+                        看看{myIndustries.map((i) => i.label).join("、")}的同行學長姐、實習生、面試者最近在聊什麼。
                     </p>
                     <div className={styles.actions}>
                         <button className={styles.primaryBtn} onClick={() => setShowNewTopic(true)} type="button">
                             <i className="ri-quill-pen-line" />
                             開一個新話題
                         </button>
-                        <a className={styles.ghostBtn} href="#latest">
-                            看看大家在聊什麼
-                        </a>
+                        <button className={styles.ghostBtn} onClick={onRequestEditProfile} type="button">
+                            <i className="ri-equalizer-2-line" />
+                            調整訂閱的論壇
+                        </button>
                     </div>
                 </div>
 
-                {trending.length > 0 && (
+                {/* My forums */}
+                {myIndustries.length > 0 && (
                     <section className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <h2 className={styles.sectionTitle}>
-                                <i className={`ri-fire-fill ${styles.fireIcon}`} />
-                                熱門話題
+                                <i className="ri-bookmark-3-line" /> 我的論壇
                             </h2>
+                            <p className={styles.sectionHelp}>點進去看每個行業的完整討論</p>
                         </div>
-                        <div className={styles.trendingScroll}>
-                            {trending.map((t) => (
+                        <div className={styles.industryCardsRow}>
+                            {myIndustries.map((ind) => (
                                 <Link
-                                    key={t.id}
-                                    href={`/topics/${t.id}`}
-                                    className={styles.trendingCard}
+                                    key={ind.id}
+                                    href={`/forums/${ind.id}`}
+                                    className={styles.industryCard}
+                                    style={{ "--accent": ind.accent }}
                                 >
-                                    <span className={styles.trendingBadge}>🔥 熱門</span>
-                                    <h3 className={styles.trendingTitle}>{t.title}</h3>
-                                    <div className={styles.trendingMeta}>
-                                        <span className={styles.metaItem}>
-                                            <i className="ri-chat-3-line" /> {t.replyCount} 則回覆
-                                        </span>
-                                        <span className={styles.metaItem}>
-                                            <i className="ri-eye-line" /> {t.viewCount}
+                                    <div className={styles.industryCardHeader}>
+                                        <span className={styles.industryCardEmoji} aria-hidden="true">{ind.emoji}</span>
+                                        <span className={styles.industryCardLabel}>{ind.label}</span>
+                                        <span className={styles.industryCardCount}>{ind.topicCount} 話題</span>
+                                    </div>
+                                    <p className={styles.industryCardDesc}>{ind.description}</p>
+                                    <div className={styles.industryCardFooter}>
+                                        <span>{ind.label}論壇</span>
+                                        <span className={styles.industryCardCta}>
+                                            進入 <i className="ri-arrow-right-line" />
                                         </span>
                                     </div>
                                 </Link>
@@ -110,9 +145,59 @@ export default function DiscussList() {
                     </section>
                 )}
 
+                {/* Trending across joined industries */}
+                {trending.length > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                <i className={`ri-fire-fill ${styles.fireIcon}`} />
+                                你的論壇正熱
+                            </h2>
+                            <p className={styles.sectionHelp}>
+                                依「回覆數 × 2 + 瀏覽數」計算
+                            </p>
+                        </div>
+                        <div className={styles.trendingScroll}>
+                            {trending.map((t) => {
+                                const ind = industries.find((i) => i.id === t.industry);
+                                return (
+                                    <Link
+                                        key={t.id}
+                                        href={`/topics/${t.id}`}
+                                        className={styles.trendingCard}
+                                    >
+                                        <div className={styles.trendingBadgeRow}>
+                                            <span className={styles.trendingBadge}>🔥 熱門</span>
+                                            {ind && (
+                                                <span
+                                                    className={styles.industryBadge}
+                                                    style={{ "--accent": ind.accent }}
+                                                >
+                                                    {ind.emoji} {ind.label}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 className={styles.trendingTitle}>{t.title}</h3>
+                                        <div className={styles.trendingMeta}>
+                                            <span className={styles.metaItem}>
+                                                <i className="ri-chat-3-line" /> {t.replyCount} 則回覆
+                                            </span>
+                                            <span className={styles.metaItem}>
+                                                <i className="ri-eye-line" /> {t.viewCount}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
+                {/* Recent across my forums + sub-category filter */}
                 <section className={styles.section} id="latest">
                     <div className={styles.sectionHeader}>
-                        <h2 className={styles.sectionTitle}>所有話題</h2>
+                        <h2 className={styles.sectionTitle}>最新話題</h2>
+                        <p className={styles.sectionHelp}>來自你訂閱的論壇</p>
                     </div>
                     <div className={styles.categoryRow}>
                         {CATEGORIES.map((c) => (
@@ -129,9 +214,6 @@ export default function DiscussList() {
                             </button>
                         ))}
                     </div>
-                </section>
-
-                <section className={styles.section}>
                     <div className={styles.topicList}>
                         {topics === null && (
                             <>
@@ -143,7 +225,7 @@ export default function DiscussList() {
                         {Array.isArray(topics) && topics.length === 0 && (
                             <div className={styles.empty}>
                                 <div className={styles.emptyEmoji}>💭</div>
-                                <p>這個分類還沒有話題，要不要當第一個發起的人？</p>
+                                <p>這個分類在你訂閱的論壇還沒有話題，當第一個發起的人吧？</p>
                                 <button
                                     type="button"
                                     className={styles.primaryBtn}
@@ -155,34 +237,70 @@ export default function DiscussList() {
                                 </button>
                             </div>
                         )}
-                        {Array.isArray(topics) && topics.map((t) => (
-                            <Link key={t.id} href={`/topics/${t.id}`} className={styles.topicCard}>
-                                <div className={styles.topicAvatar}>{avatarInitial(t.authorName)}</div>
-                                <div className={styles.topicBody}>
-                                    <h3 className={styles.topicTitle}>{t.title}</h3>
-                                    {t.description && <p className={styles.topicDesc}>{t.description}</p>}
-                                    <div className={styles.topicFooter}>
-                                        {t.replyCount >= 3 && (
-                                            <span className={`${styles.tag} ${styles.tagHot}`}>🔥 熱聊中</span>
-                                        )}
-                                        <span className={styles.tag}>
-                                            {CATEGORIES.find((c) => c.id === t.category)?.label || "其他"}
-                                        </span>
-                                        <span className={styles.metaItem}>
-                                            <i className="ri-chat-3-line" /> {t.replyCount}
-                                        </span>
-                                        <span className={styles.metaItem}>
-                                            <i className="ri-time-line" /> {RELATIVE_TIME(t.lastActivityAt)}
-                                        </span>
-                                        <span className={styles.metaItem}>
-                                            <i className="ri-user-line" /> {t.authorName}
-                                        </span>
+                        {Array.isArray(topics) && topics.map((t) => {
+                            const ind = industries.find((i) => i.id === t.industry);
+                            return (
+                                <Link key={t.id} href={`/topics/${t.id}`} className={styles.topicCard}>
+                                    <div className={styles.topicAvatar}>{avatarInitial(t.authorName)}</div>
+                                    <div className={styles.topicBody}>
+                                        <h3 className={styles.topicTitle}>{t.title}</h3>
+                                        {t.description && <p className={styles.topicDesc}>{t.description}</p>}
+                                        <div className={styles.topicFooter}>
+                                            {ind && (
+                                                <span
+                                                    className={`${styles.tag} ${styles.industryTag}`}
+                                                    style={{ "--accent": ind.accent }}
+                                                >
+                                                    {ind.emoji} {ind.label}
+                                                </span>
+                                            )}
+                                            {t.replyCount >= 3 && (
+                                                <span className={`${styles.tag} ${styles.tagHot}`}>🔥 熱聊中</span>
+                                            )}
+                                            <span className={styles.tag}>
+                                                {CATEGORIES.find((c) => c.id === t.category)?.label || "其他"}
+                                            </span>
+                                            <span className={styles.metaItem}>
+                                                <i className="ri-chat-3-line" /> {t.replyCount}
+                                            </span>
+                                            <span className={styles.metaItem}>
+                                                <i className="ri-time-line" /> {RELATIVE_TIME(t.lastActivityAt)}
+                                            </span>
+                                            <span className={styles.metaItem}>
+                                                <i className="ri-user-line" /> {t.authorName}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </section>
+
+                {/* Discover other industries */}
+                {otherIndustries.length > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                <i className="ri-compass-3-line" /> 探索其他論壇
+                            </h2>
+                            <p className={styles.sectionHelp}>逛逛其他行業在聊什麼</p>
+                        </div>
+                        <div className={styles.discoverRow}>
+                            {otherIndustries.map((ind) => (
+                                <Link
+                                    key={ind.id}
+                                    href={`/forums/${ind.id}`}
+                                    className={styles.discoverChip}
+                                >
+                                    <span aria-hidden="true">{ind.emoji}</span>
+                                    {ind.label}
+                                    <span style={{ color: "#9ca3af" }}>· {ind.topicCount}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
 
             <button
@@ -196,111 +314,17 @@ export default function DiscussList() {
 
             {showNewTopic && (
                 <NewTopicModal
+                    industries={industries}
+                    categories={CATEGORIES}
+                    initialIndustry={myIndustryIds[0] || industries[0]?.id}
+                    defaultName={profile?.displayName}
                     onClose={() => setShowNewTopic(false)}
-                    onCreated={(id) => {
+                    onCreated={(topic) => {
                         setShowNewTopic(false);
-                        router.push(`/topics/${id}`);
+                        router.push(`/topics/${topic.id}`);
                     }}
                 />
             )}
-        </div>
-    );
-}
-
-function NewTopicModal({ onClose, onCreated }) {
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("career");
-    const [authorName, setAuthorName] = useState("");
-    const [posting, setPosting] = useState(false);
-    const [error, setError] = useState("");
-
-    async function submit() {
-        const t = title.trim();
-        if (!t) return;
-        setPosting(true);
-        setError("");
-        try {
-            const res = await fetch("/api/discuss/topics", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: t,
-                    description,
-                    category,
-                    authorName: authorName.trim() || "匿名同學",
-                }),
-            });
-            const json = await res.json();
-            if (!json.ok) throw new Error(json.error || "create failed");
-            onCreated?.(json.topic.id);
-        } catch (err) {
-            setError(err.message || "發布失敗");
-        } finally {
-            setPosting(false);
-        }
-    }
-
-    return (
-        <div className={styles.modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) onClose?.(); }}>
-            <div className={styles.modal}>
-                <h3 className={styles.modalTitle}>開一個新話題</h3>
-
-                <label className={styles.modalLabel}>主題標題</label>
-                <input
-                    className={styles.modalInput}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="例如：大三才開始準備實習會不會太晚？"
-                    maxLength={80}
-                    autoFocus
-                />
-
-                <label className={styles.modalLabel}>分類</label>
-                <select
-                    className={styles.modalInput}
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                >
-                    {CATEGORIES.filter((c) => c.id !== "all").map((c) => (
-                        <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-                    ))}
-                </select>
-
-                <label className={styles.modalLabel}>顯示名稱（可選，預設「匿名同學」）</label>
-                <input
-                    className={styles.modalInput}
-                    value={authorName}
-                    onChange={(e) => setAuthorName(e.target.value)}
-                    placeholder="匿名同學"
-                    maxLength={20}
-                />
-
-                <label className={styles.modalLabel}>補充說明（可選）</label>
-                <textarea
-                    className={styles.modalTextarea}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="多說一點背景，讓大家更知道怎麼回你⋯⋯"
-                    maxLength={400}
-                />
-
-                {error && <div style={{ color: "#c43e3e", marginBottom: 10 }}>{error}</div>}
-
-                <div className={styles.modalActions}>
-                    <button type="button" className={styles.ghostBtn} onClick={onClose} disabled={posting}>
-                        取消
-                    </button>
-                    <button
-                        type="button"
-                        className={styles.primaryBtn}
-                        onClick={submit}
-                        disabled={posting || !title.trim()}
-                    >
-                        {posting ? "發布中…" : "發布話題"}
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }

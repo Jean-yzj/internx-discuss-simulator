@@ -2,8 +2,25 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./SimulatorBar.module.css";
 
-export default function SimulatorBar() {
+function avatarInitial(name) {
+    if (!name) return "•";
+    return (name.trim().charAt(0) || "•").toUpperCase();
+}
+
+export default function SimulatorBar({ profile, industries = [], onEditProfile }) {
     const [showHelp, setShowHelp] = useState(false);
+    const onboarded = profile && Array.isArray(profile.industries) && profile.industries.length > 0;
+
+    let industriesText = "";
+    if (onboarded) {
+        const labels = profile.industries
+            .map((id) => industries.find((i) => i.id === id)?.label)
+            .filter(Boolean);
+        industriesText = labels.length > 2
+            ? `${labels.slice(0, 2).join("、")}＋${labels.length - 2}`
+            : labels.join("、");
+    }
+
     return (
         <>
             <div className={styles.bar}>
@@ -19,6 +36,23 @@ export default function SimulatorBar() {
                         <span className={styles.simDot} />
                         SIMULATOR
                     </span>
+                    {onboarded && (
+                        <button
+                            type="button"
+                            className={styles.userPill}
+                            onClick={onEditProfile}
+                            title="編輯個人資料"
+                        >
+                            <span className={styles.userAvatar}>{avatarInitial(profile.displayName)}</span>
+                            <span className={styles.userMeta}>
+                                <span className={styles.userName}>{profile.displayName || "匿名同學"}</span>
+                                {industriesText && (
+                                    <span className={styles.userIndustries}>{industriesText}</span>
+                                )}
+                            </span>
+                            <i className="ri-arrow-down-s-line" style={{ fontSize: 14, color: "#9ca3af" }} />
+                        </button>
+                    )}
                     <button
                         className={styles.helpBtn}
                         onClick={() => setShowHelp(true)}
@@ -44,7 +78,7 @@ function HelpDialog({ onClose }) {
             }}
         >
             <div style={{
-                background: "white", borderRadius: 18, padding: 24, maxWidth: 520, width: "100%",
+                background: "white", borderRadius: 18, padding: 24, maxWidth: 540, width: "100%",
                 boxShadow: "0 30px 80px rgba(0,0,0,0.3)", lineHeight: 1.6, color: "#222",
             }}>
                 <h3 style={{ margin: "0 0 12px 0", fontSize: 20, fontWeight: 800 }}>
@@ -56,6 +90,7 @@ function HelpDialog({ onClose }) {
                 <ul style={{ margin: "0 0 12px 18px", padding: 0, color: "#444" }}>
                     <li>後端是純 in-memory，重啟伺服器資料會回到 seed。</li>
                     <li>沒有與「實習通」主站共用任何資料、認證、Firestore。</li>
+                    <li>「註冊」只是 localStorage 偏好，不會送到任何地方。</li>
                     <li>留言、開新話題的功能都可實際操作，僅在這個 demo 內生效。</li>
                 </ul>
                 <button

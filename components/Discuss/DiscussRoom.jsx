@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { CATEGORIES } from "@/lib/store";
+import { CATEGORIES, INDUSTRIES } from "@/lib/store";
+import { loadProfile, saveProfile } from "@/lib/profile";
 import styles from "./DiscussRoom.module.css";
 
 function avatarInitial(name) {
@@ -44,33 +45,13 @@ function dayLabel(d) {
     return x.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric" });
 }
 
-const ME_KEY = "discuss-demo-me";
-
-function loadMe() {
-    if (typeof window === "undefined") return null;
-    try {
-        const raw = window.localStorage.getItem(ME_KEY);
-        if (!raw) return null;
-        return JSON.parse(raw);
-    } catch { return null; }
-}
-
-function saveMe(me) {
-    if (typeof window === "undefined") return;
-    try {
-        window.localStorage.setItem(ME_KEY, JSON.stringify(me));
-    } catch {}
-}
-
-function ensureMe() {
-    const existing = loadMe();
-    if (existing && existing.authorId) return existing;
-    const fresh = {
-        authorId: `me_${Math.random().toString(36).slice(2, 12)}`,
-        authorName: "",
+// Map the unified profile -> the {authorId, authorName} shape this component uses.
+function profileToMe(p) {
+    if (!p) return { authorId: "", authorName: "" };
+    return {
+        authorId: p.userId || "",
+        authorName: p.displayName || "",
     };
-    saveMe(fresh);
-    return fresh;
 }
 
 export default function DiscussRoom({ topicId }) {
@@ -83,7 +64,7 @@ export default function DiscussRoom({ topicId }) {
     const feedRef = useRef(null);
 
     useEffect(() => {
-        setMe(ensureMe());
+        setMe(profileToMe(loadProfile()));
     }, []);
 
     async function loadTopic() {
@@ -156,7 +137,8 @@ export default function DiscussRoom({ topicId }) {
             if (cleanName !== me.authorName) {
                 const updated = { ...me, authorName: cleanName };
                 setMe(updated);
-                saveMe(updated);
+                const p = loadProfile();
+                saveProfile({ ...p, displayName: cleanName });
             }
             const res = await fetch(`/api/discuss/topics/${topicId}/replies`, {
                 method: "POST",
@@ -209,15 +191,40 @@ export default function DiscussRoom({ topicId }) {
     }
 
     const categoryLabel = CATEGORIES.find((c) => c.id === topic.category)?.label || "其他";
+    const industry = INDUSTRIES.find((i) => i.id === topic.industry);
     const myLocalReplies = useMemoMyReplies(replies, me.authorId);
 
     return (
         <div className={styles.page}>
             <div className={styles.header}>
-                <Link href="/" className={styles.backBtn} aria-label="返回">
+                <Link
+                    href={industry ? `/forums/${industry.id}` : "/"}
+                    className={styles.backBtn}
+                    aria-label="返回"
+                >
                     <i className="ri-arrow-left-line" />
                 </Link>
                 <div className={styles.headerBody}>
+                    {industry && (
+                        <Link
+                            href={`/forums/${industry.id}`}
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 4,
+                                padding: "3px 10px",
+                                background: industry.accent,
+                                color: "white",
+                                borderRadius: 999,
+                                fontSize: 12,
+                                fontWeight: 700,
+                                textDecoration: "none",
+                                marginBottom: 6,
+                            }}
+                        >
+                            {industry.emoji} {industry.label}論壇
+                        </Link>
+                    )}
                     <h1 className={styles.title}>{topic.title}</h1>
                     {topic.description && <p className={styles.subtitle}>{topic.description}</p>}
                     <div className={styles.meta}>
@@ -289,7 +296,8 @@ export default function DiscussRoom({ topicId }) {
                         onChange={(e) => {
                             const next = { ...me, authorName: e.target.value };
                             setMe(next);
-                            saveMe(next);
+                            const p = loadProfile();
+                            saveProfile({ ...p, displayName: e.target.value });
                         }}
                         placeholder="顯示名稱"
                         maxLength={20}

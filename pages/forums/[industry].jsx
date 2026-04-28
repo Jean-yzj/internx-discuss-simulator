@@ -4,15 +4,15 @@ import SimulatorBar from "@/components/SimulatorBar";
 import Onboarding from "@/components/Onboarding";
 import { useUserSession } from "@/lib/useUserSession";
 
-const DiscussRoom = dynamic(() => import("@/components/Discuss/DiscussRoom"), {
+const IndustryForum = dynamic(() => import("@/components/Discuss/IndustryForum"), {
     ssr: false,
 });
 
-export default function TopicPage() {
+export default function IndustryForumPage() {
     const router = useRouter();
     const session = useUserSession();
-    const { id } = router.query;
-    const normalized = Array.isArray(id) ? id[0] : id;
+    const { industry } = router.query;
+    const id = Array.isArray(industry) ? industry[0] : industry;
 
     if (!session.hydrated) return null;
 
@@ -23,8 +23,14 @@ export default function TopicPage() {
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
             />
-            {session.isOnboarded && normalized ? (
-                <DiscussRoom topicId={normalized} />
+            {session.isOnboarded && id ? (
+                <IndustryForum
+                    industries={session.industries}
+                    industryId={id}
+                    profile={session.profile}
+                    onJoinIndustry={session.joinIndustry}
+                    onLeaveIndustry={session.leaveIndustry}
+                />
             ) : null}
             {session.showOnboarding && (
                 <Onboarding

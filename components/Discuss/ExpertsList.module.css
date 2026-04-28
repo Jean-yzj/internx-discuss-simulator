@@ -8,7 +8,7 @@
 }
 
 .inner {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -70,7 +70,7 @@
 .brandCard {
     background: linear-gradient(135deg, var(--brand-color), var(--brand-accent));
     color: white;
-    border-radius: 22px;
+    border-radius: var(--border-radius);
     padding: 26px;
     box-shadow: 0 16px 40px rgba(15,23,42,0.16);
     display: grid;
@@ -94,7 +94,7 @@
 .brandLogo {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     background: rgba(255,255,255,0.18);
     display: flex;
     align-items: center;
@@ -122,7 +122,7 @@
 
 .brandExperts {
     background: rgba(255,255,255,0.10);
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     padding: 14px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -183,7 +183,7 @@
 
 .personCard {
     border: 1px solid #e5e7eb;
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     padding: 18px;
     background: white;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);

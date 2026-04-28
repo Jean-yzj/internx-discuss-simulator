@@ -23,9 +23,11 @@ export default function TopicPage() {
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
                 onSwitchRole={session.setDemoRole}
+                notifications={session.notifications}
+                onMarkNotificationsRead={session.markNotificationsRead}
             />
             {session.isOnboarded && normalized ? (
-                <DiscussRoom topicId={normalized} />
+                <DiscussRoom topicId={normalized} onRecordActivity={session.recordActivity} />
             ) : null}
             {session.showOnboarding && (
                 <Onboarding

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { CATEGORIES, INDUSTRIES } from "@/lib/store";
 import { loadProfile, saveProfile, isModeratorOf } from "@/lib/profile";
 import { BadgeRow, BrandCallout } from "@/components/Badge";
+import UserPopover from "@/components/UserPopover";
 import styles from "./DiscussRoom.module.css";
 
 function avatarInitial(name) {
@@ -46,7 +47,7 @@ function dayLabel(d) {
     return x.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric" });
 }
 
-export default function DiscussRoom({ topicId }) {
+export default function DiscussRoom({ topicId, onRecordActivity }) {
     const router = useRouter();
     const [topic, setTopic] = useState(undefined); // undefined = loading, null = not found
     const [replies, setReplies] = useState([]);
@@ -141,6 +142,15 @@ export default function DiscussRoom({ topicId }) {
             if (!json.ok) throw new Error(json.error || "post failed");
             setReplies((curr) => [...curr, json.reply]);
             setDraft("");
+            // Record this topic in the user's activity history
+            if (onRecordActivity && topic) {
+                onRecordActivity({
+                    id: topic.id,
+                    title: topic.title,
+                    industry: topic.industry,
+                    role: topic.authorId === profile?.userId ? "author" : "replier",
+                });
+            }
         } catch (err) {
             console.error("post reply failed", err);
             alert("送出失敗：" + (err.message || "未知錯誤"));
@@ -350,7 +360,14 @@ export default function DiscussRoom({ topicId }) {
                             <div className={styles.avatar}>{avatarInitial(topic.authorName)}</div>
                             <div className={styles.bubbleBody} style={{ flex: 1 }}>
                                 <div className={styles.authorRow}>
-                                    <span className={styles.authorName}>{topic.authorName}</span>
+                                    <UserPopover
+                                        authorId={topic.authorId}
+                                        authorName={topic.authorName}
+                                        authorBadges={topic.authorBadges}
+                                        authorBrand={topic.authorBrand}
+                                    >
+                                        <span className={styles.authorName}>{topic.authorName}</span>
+                                    </UserPopover>
                                     {Array.isArray(topic.authorBadges) && topic.authorBadges.length > 0 && (
                                         <BadgeRow badges={topic.authorBadges} brand={topic.authorBrand} size="small" />
                                     )}
@@ -392,7 +409,14 @@ export default function DiscussRoom({ topicId }) {
                                 </div>
                                 <div className={styles.bubbleBody}>
                                     <div className={styles.authorRow}>
-                                        <span className={styles.authorName}>{r.authorName}</span>
+                                        <UserPopover
+                                            authorId={r.authorId}
+                                            authorName={r.authorName}
+                                            authorBadges={r.authorBadges}
+                                            authorBrand={r.authorBrand}
+                                        >
+                                            <span className={styles.authorName}>{r.authorName}</span>
+                                        </UserPopover>
                                         {Array.isArray(r.authorBadges) && r.authorBadges.length > 0 && (
                                             <BadgeRow badges={r.authorBadges} brand={r.authorBrand} variant="icon" />
                                         )}

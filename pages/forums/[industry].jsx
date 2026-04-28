@@ -23,6 +23,8 @@ export default function IndustryForumPage() {
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
                 onSwitchRole={session.setDemoRole}
+                notifications={session.notifications}
+                onMarkNotificationsRead={session.markNotificationsRead}
             />
             {session.isOnboarded && id ? (
                 <IndustryForum
@@ -31,6 +33,7 @@ export default function IndustryForumPage() {
                     profile={session.profile}
                     onJoinIndustry={session.joinIndustry}
                     onLeaveIndustry={session.leaveIndustry}
+                    onRecordActivity={session.recordActivity}
                 />
             ) : null}
             {session.showOnboarding && (

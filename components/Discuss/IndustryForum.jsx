@@ -86,6 +86,7 @@ export default function IndustryForum({
     profile,
     onJoinIndustry,
     onLeaveIndustry,
+    onRecordActivity,
 }) {
     const router = useRouter();
     const industry = industries.find((i) => i.id === industryId);
@@ -447,6 +448,12 @@ export default function IndustryForum({
                     onClose={() => setShowNewTopic(false)}
                     onCreated={(topic) => {
                         setShowNewTopic(false);
+                        onRecordActivity?.({
+                            id: topic.id,
+                            title: topic.title,
+                            industry: topic.industry,
+                            role: "author",
+                        });
                         router.push(`/topics/${topic.id}`);
                     }}
                 />

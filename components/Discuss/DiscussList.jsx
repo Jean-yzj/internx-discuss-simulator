@@ -33,6 +33,7 @@ export default function DiscussList({
     industries,
     onRequestEditProfile,
     onPollVoted,
+    onRecordActivity,
     hasCompletedSurvey,
 }) {
     const router = useRouter();
@@ -195,6 +196,58 @@ export default function DiscussList({
                         </div>
                     )}
                 </div>
+
+                {/* My activity (only when there is some) */}
+                {Array.isArray(profile?.myActivity) && profile.myActivity.length > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                <i className="ri-history-line" /> 我的活動
+                            </h2>
+                            <p className={styles.sectionHelp}>你開過或回過的話題</p>
+                        </div>
+                        <div className={styles.topicList}>
+                            {profile.myActivity.slice(0, 5).map((act) => {
+                                const ind = industries.find((i) => i.id === act.industry);
+                                return (
+                                    <Link key={act.id} href={`/topics/${act.id}`} className={styles.topicCard}>
+                                        <div
+                                            className={styles.topicAvatar}
+                                            style={ind ? { background: ind.accent } : undefined}
+                                        >
+                                            <i className={act.role === "author" ? "ri-quill-pen-line" : "ri-reply-line"} />
+                                        </div>
+                                        <div className={styles.topicBody}>
+                                            <h3 className={styles.topicTitle}>{act.title}</h3>
+                                            <div className={styles.topicFooter}>
+                                                <span
+                                                    className={styles.tag}
+                                                    style={{
+                                                        background: act.role === "author" ? "rgba(1,130,253,0.10)" : "rgba(226,162,0,0.10)",
+                                                        color: act.role === "author" ? "var(--theme-color)" : "var(--complementary-color)",
+                                                    }}
+                                                >
+                                                    {act.role === "author" ? "你發起" : "你回覆過"}
+                                                </span>
+                                                {ind && (
+                                                    <span
+                                                        className={`${styles.tag} ${styles.industryTag}`}
+                                                        style={{ "--accent": ind.accent }}
+                                                    >
+                                                        {ind.emoji} {ind.label}
+                                                    </span>
+                                                )}
+                                                <span className={styles.metaItem}>
+                                                    <i className="ri-time-line" /> {RELATIVE_TIME(act.lastTouchedAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
 
                 {/* My forums */}
                 {myIndustries.length > 0 && (
@@ -484,6 +537,12 @@ export default function DiscussList({
                     onClose={() => setShowNewTopic(false)}
                     onCreated={(topic) => {
                         setShowNewTopic(false);
+                        onRecordActivity?.({
+                            id: topic.id,
+                            title: topic.title,
+                            industry: topic.industry,
+                            role: "author",
+                        });
                         router.push(`/topics/${topic.id}`);
                     }}
                 />

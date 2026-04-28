@@ -57,7 +57,7 @@
 .surveyForm {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 18px;
+    border-radius: var(--border-radius);
     padding: 24px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.04);
 }
@@ -242,7 +242,7 @@
 .resultsHero {
     background: linear-gradient(135deg, #7c3aed, #c026d3);
     color: white;
-    border-radius: 22px;
+    border-radius: var(--border-radius);
     padding: 28px;
     margin-bottom: 16px;
     box-shadow: 0 16px 40px rgba(124,58,237,0.28);
@@ -262,7 +262,7 @@
 .resultsCard {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 18px;
+    border-radius: var(--border-radius);
     padding: 22px;
     margin-bottom: 14px;
 }

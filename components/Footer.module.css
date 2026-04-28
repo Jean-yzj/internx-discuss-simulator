@@ -1,0 +1,102 @@
+/* Mirrors InternX Footer.module.css — dark #222 background, white text. */
+
+.footer {
+    font-family: var(--font-family);
+    overflow: hidden;
+    position: relative;
+    background-color: #222;
+    margin-top: 60px;
+}
+
+.center {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 50px 20px 30px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+    color: white;
+    font-size: 14px;
+}
+
+.brandColumn { color: white; }
+.brandLogo {
+    height: 40px;
+    background-image: url("/internx-logo-long-white.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+    margin-bottom: 14px;
+}
+.brandTagline {
+    margin: 0 0 12px 0;
+    line-height: 1.7;
+    font-size: 13px;
+    color: #d1d5db;
+    max-width: 360px;
+}
+.simChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(1,130,253,0.18);
+    color: #93c5fd;
+    border: 1px solid rgba(1,130,253,0.4);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.column { color: white; }
+.columnTitle {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: white;
+}
+.columnLink {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0 0 8px 0;
+    font-size: 13px;
+}
+.columnLink a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.columnLink a:hover {
+    color: var(--theme-light);
+}
+
+.bottom {
+    border-top: 1px solid #444;
+    color: #999;
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 16px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.bottom a {
+    color: #d1d5db;
+    text-decoration: none;
+}
+.bottom a:hover { color: var(--theme-light); }
+
+@media (max-width: 850px) {
+    .center {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 40px 20px 20px;
+    }
+    .brandColumn { grid-row: 1; }
+    .bottom { flex-direction: column; align-items: flex-start; }
+}

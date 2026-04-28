@@ -6,16 +6,15 @@
 }
 
 .banner {
-    background:
-        linear-gradient(135deg, var(--accent, #1f2937) 0%, color-mix(in srgb, var(--accent, #1f2937) 70%, white) 100%);
+    background: var(--accent, #1f2937);
     color: white;
-    padding: 40px 0 80px;
+    padding: 36px 0 64px;
     position: relative;
     overflow: hidden;
 }
 
 .bannerInner {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
     position: relative;
@@ -50,7 +49,7 @@
 .bannerEmoji {
     width: 64px;
     height: 64px;
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     background: rgba(255,255,255,0.18);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -93,29 +92,33 @@
 
 .bannerPrimaryBtn {
     appearance: none;
-    border: none;
+    border: 1px solid transparent;
     background: white;
     color: var(--accent, #1f2937);
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-weight: 700;
+    padding: 0 18px;
+    height: 42px;
+    line-height: 1;
+    border-radius: var(--border-radius);
+    font-weight: 500;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-family: inherit;
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition: background .15s ease;
 }
-.bannerPrimaryBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+.bannerPrimaryBtn:hover { background: #f7f7f7; }
 
 .bannerGhostBtn {
     appearance: none;
     border: 1px solid rgba(255,255,255,0.5);
     background: rgba(255,255,255,0.1);
     color: white;
-    padding: 10px 16px;
-    border-radius: 999px;
-    font-weight: 600;
+    padding: 0 16px;
+    height: 42px;
+    line-height: 1;
+    border-radius: var(--border-radius);
+    font-weight: 500;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -126,7 +129,7 @@
 .bannerGhostBtn:hover { background: rgba(255,255,255,0.18); }
 
 .body {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: -40px auto 0;
     padding: 0 20px;
     position: relative;
@@ -142,10 +145,10 @@
 
 .trendingCard {
     background: white;
-    border-radius: 18px;
+    border-radius: var(--border-radius);
     padding: 20px;
-    box-shadow: 0 12px 30px rgba(15,23,42,0.08);
-    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    border: 1px solid #e5e5e5;
 }
 
 .trendingCard h3 {
@@ -210,10 +213,10 @@
 
 .statsCard {
     background: white;
-    border-radius: 18px;
+    border-radius: var(--border-radius);
     padding: 20px;
-    box-shadow: 0 12px 30px rgba(15,23,42,0.08);
-    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    border: 1px solid #e5e5e5;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -307,12 +310,12 @@
 }
 
 .topicCard {
-    border: 1px solid #eee;
-    border-radius: 14px;
-    padding: 16px 18px;
+    border: 1px solid #e5e5e5;
+    border-radius: var(--border-radius);
+    padding: 14px 18px;
     background: white;
     cursor: pointer;
-    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    transition: border-color .15s ease, background .15s ease;
     display: flex;
     gap: 14px;
     align-items: flex-start;
@@ -321,8 +324,7 @@
 }
 .topicCard:hover {
     border-color: var(--accent, var(--theme-color));
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    transform: translateY(-1px);
+    background: #fafcff;
 }
 
 .topicAvatar {
@@ -392,14 +394,14 @@
     text-align: center;
     color: #888;
     background: white;
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     border: 1px dashed #e5e7eb;
 }
 .emptyEmoji { font-size: 40px; margin-bottom: 8px; }
 
 .skeleton {
     border: 1px solid #eee;
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     background: linear-gradient(90deg, #f7f7f7 0%, #f0f0f0 50%, #f7f7f7 100%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;

@@ -183,6 +183,182 @@
     background: var(--background-color-gray);
 }
 
+/* Search trigger pill matches main-site IconButton style:
+   round-ish, transparent on hover, --theme-color icon. */
+.iconBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--theme-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: relative;
+    transition: background 0.15s;
+}
+.iconBtn:hover { background: var(--background-color-hover); }
+
+.notifDot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #d80f0f;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.kbdHint {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: #6b7280;
+    font-family: monospace;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.searchTrigger {
+    appearance: none;
+    border: 1px solid #e5e5e5;
+    background: white;
+    color: #6b7280;
+    padding: 0 12px;
+    height: 36px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    transition: 0.15s;
+    min-width: 180px;
+}
+.searchTrigger:hover { border-color: var(--theme-color); color: var(--theme-color); }
+.searchTrigger i { font-size: 16px; }
+.searchTriggerText { flex: 1; text-align: left; color: #9ca3af; }
+
+@media (max-width: 850px) {
+    .searchTrigger {
+        min-width: 0;
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+    }
+    .searchTriggerText, .kbdHint { display: none; }
+}
+
+.notifMenu {
+    position: absolute;
+    top: calc(var(--top-bar-height) + 8px);
+    right: 16px;
+    background: white;
+    border-radius: var(--border-radius);
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+    z-index: 1010;
+}
+.notifHeader {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notifHeader h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+.notifHeader button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--theme-color);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+}
+.notifHeader button:hover { text-decoration: underline; }
+.notifList {
+    max-height: 360px;
+    overflow-y: auto;
+}
+.notifItem {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f8fafc;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s;
+}
+.notifItem:hover { background: #f9fafb; }
+.notifItem:last-child { border-bottom: none; }
+.notifItemIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--theme-white);
+    color: var(--theme-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.notifItemBody {
+    flex: 1;
+    min-width: 0;
+}
+.notifItemTitle {
+    font-size: 13px;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.5;
+}
+.notifItemTime {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+.notifEmpty {
+    padding: 36px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 13px;
+}
+.notifUnread {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--theme-color);
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: center;
+}
+
 .rolePill {
     appearance: none;
     border: 1px dashed #c7d2fe;

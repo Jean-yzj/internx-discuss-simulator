@@ -18,6 +18,8 @@ export default function ExpertsPage() {
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
                 onSwitchRole={session.setDemoRole}
+                notifications={session.notifications}
+                onMarkNotificationsRead={session.markNotificationsRead}
             />
             {session.isOnboarded ? <ExpertsList /> : null}
             {session.showOnboarding && (

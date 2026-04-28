@@ -19,6 +19,8 @@ export default function Home() {
                 industries={session.industries}
                 onEditProfile={session.openEditProfile}
                 onSwitchRole={session.setDemoRole}
+                notifications={session.notifications}
+                onMarkNotificationsRead={session.markNotificationsRead}
             />
             {session.isOnboarded ? (
                 <DiscussList
@@ -26,6 +28,7 @@ export default function Home() {
                     industries={session.industries}
                     onRequestEditProfile={session.openEditProfile}
                     onPollVoted={session.recordPollVote}
+                    onRecordActivity={session.recordActivity}
                     hasCompletedSurvey={session.hasCompletedSurvey}
                 />
             ) : null}

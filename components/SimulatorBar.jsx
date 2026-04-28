@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BadgeRow } from "./Badge";
+import SearchOverlay from "./SearchOverlay";
 import { DEMO_ROLES } from "@/lib/profile";
 import styles from "./SimulatorBar.module.css";
 
@@ -38,12 +39,33 @@ export default function SimulatorBar({
     industries = [],
     onEditProfile,
     onSwitchRole,
+    notifications = [],
+    onMarkNotificationsRead,
 }) {
     const router = useRouter();
     const [showHelp, setShowHelp] = useState(false);
     const [showRoles, setShowRoles] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+    const [showNotif, setShowNotif] = useState(false);
 
     const onboarded = profile && Array.isArray(profile.industries) && profile.industries.length > 0;
+    const unreadCount = notifications.filter((n) => !n.read).length;
+
+    // Cmd+K / Ctrl+K opens search
+    useEffect(() => {
+        function onKey(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+                e.preventDefault();
+                setShowSearch(true);
+            }
+            if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+                e.preventDefault();
+                setShowSearch(true);
+            }
+        }
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, []);
 
     let industriesText = "";
     if (onboarded) {
@@ -86,6 +108,37 @@ export default function SimulatorBar({
                         </div>
                     </div>
                     <div className={styles.right}>
+                        {/* Search */}
+                        <button
+                            type="button"
+                            className={styles.searchTrigger}
+                            onClick={() => setShowSearch(true)}
+                            title="搜尋（⌘K）"
+                        >
+                            <i className="ri-search-line" />
+                            <span className={styles.searchTriggerText}>搜尋話題、專家⋯⋯</span>
+                            <span className={styles.kbdHint}>⌘K</span>
+                        </button>
+
+                        {/* Notifications */}
+                        {onboarded && (
+                            <button
+                                type="button"
+                                className={styles.iconBtn}
+                                onClick={() => {
+                                    setShowNotif((s) => !s);
+                                    if (!showNotif) onMarkNotificationsRead?.();
+                                }}
+                                title="通知"
+                                aria-label="通知"
+                            >
+                                <i className="ri-notification-3-line" />
+                                {unreadCount > 0 && (
+                                    <span className={styles.notifDot}>{unreadCount}</span>
+                                )}
+                            </button>
+                        )}
+
                         <span className={styles.simChip}>
                             <span className={styles.simDot} />
                             SIMULATOR
@@ -169,6 +222,49 @@ export default function SimulatorBar({
                 </>
             )}
 
+            {showNotif && (
+                <>
+                    <div className={styles.menuBackdrop} onClick={() => setShowNotif(false)} />
+                    <div className={styles.notifMenu} role="menu">
+                        <div className={styles.notifHeader}>
+                            <h3>通知</h3>
+                            {unreadCount > 0 && (
+                                <button type="button" onClick={() => onMarkNotificationsRead?.()}>
+                                    全部標為已讀
+                                </button>
+                            )}
+                        </div>
+                        <div className={styles.notifList}>
+                            {notifications.length === 0 ? (
+                                <div className={styles.notifEmpty}>
+                                    沒有新的通知。<br />
+                                    這裡會出現「有人回覆你的話題」、「你訂閱的論壇有新熱門」等提醒。
+                                </div>
+                            ) : (
+                                notifications.map((n) => (
+                                    <Link
+                                        key={n.id}
+                                        href={n.href || "#"}
+                                        className={styles.notifItem}
+                                        onClick={() => setShowNotif(false)}
+                                    >
+                                        <span className={styles.notifItemIcon}>
+                                            <i className={n.icon || "ri-notification-3-line"} />
+                                        </span>
+                                        <div className={styles.notifItemBody}>
+                                            <p className={styles.notifItemTitle}>{n.text}</p>
+                                            <div className={styles.notifItemTime}>{n.time}</div>
+                                        </div>
+                                        {!n.read && <span className={styles.notifUnread} />}
+                                    </Link>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {showSearch && <SearchOverlay open={showSearch} onClose={() => setShowSearch(false)} />}
             {showHelp && <HelpDialog onClose={() => setShowHelp(false)} />}
         </>
     );

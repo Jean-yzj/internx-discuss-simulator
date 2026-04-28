@@ -387,13 +387,13 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0182fd, #e2a200);
-    color: white;
-    font-weight: 700;
+    background: var(--theme-white);
+    color: var(--theme-color);
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(var(--font-size) / 8);
+    font-size: calc(var(--font-size) / 9);
 }
 
 .topicBody {

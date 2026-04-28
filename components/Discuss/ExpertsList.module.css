@@ -204,7 +204,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0182fd, #e2a200);
+    background: var(--theme-white);
     color: white;
     font-weight: 800;
     display: flex;

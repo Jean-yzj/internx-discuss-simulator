@@ -5,6 +5,55 @@
     gap: 4px;
 }
 
+/*
+ * Icon-only variant — matches the InternX main-site `ProfileBadge` look:
+ * a Remix Icon coloured with the badge's accent, tooltip on hover.
+ * Used inline next to author names in dense lists.
+ */
+.iconRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.iconBadge {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    cursor: help;
+    position: relative;
+}
+.iconBadge i {
+    font-size: 16px;
+}
+.iconBadge .tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    font-weight: 400;
+    z-index: 1000;
+    margin-bottom: 5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease;
+}
+.iconBadge:hover .tooltip { opacity: 1; }
+.iconBadge .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+}
+
 .badge {
     display: inline-flex;
     align-items: center;

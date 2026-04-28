@@ -117,7 +117,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00a6e8, #ffb700);
+    background: linear-gradient(135deg, #0182fd, #e2a200);
     color: white;
     font-weight: 700;
     display: flex;
@@ -126,7 +126,7 @@
     font-size: calc(var(--font-size) / 9);
 }
 .avatarSelf {
-    background: linear-gradient(135deg, #ffb700, #ff6a00);
+    background: linear-gradient(135deg, #e2a200, #ff6a00);
 }
 
 .bubbleBody {
@@ -171,8 +171,8 @@
 .bubbleSelf .bubbleTime { text-align: right; }
 
 .firstPost {
-    background: linear-gradient(135deg, rgba(0,166,232,0.06), rgba(255,183,0,0.06));
-    border: 1px solid rgba(0,166,232,0.18);
+    background: linear-gradient(135deg, rgba(1,130,253,0.06), rgba(226,162,0,0.06));
+    border: 1px solid rgba(1,130,253,0.18);
     border-radius: 16px;
     padding: 14px 16px;
     margin-bottom: 6px;
@@ -282,9 +282,9 @@
 
 /* Brand-expert bubble — highlighted background */
 .bubbleBrand .bubbleContent {
-    background: linear-gradient(135deg, rgba(14,165,233,0.05), rgba(12,74,110,0.05));
-    border: 1.5px solid rgba(14,165,233,0.30);
-    box-shadow: 0 4px 12px rgba(12,74,110,0.08);
+    background: linear-gradient(135deg, rgba(1,130,253,0.05), rgba(24,97,168,0.05));
+    border: 1.5px solid rgba(1,130,253,0.30);
+    box-shadow: 0 4px 12px rgba(24,97,168,0.08);
 }
 
 /* Reply action row */

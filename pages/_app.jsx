@@ -9,8 +9,8 @@ export default function App({ Component, pageProps }) {
                 <title>實習通｜話題討論 Simulator</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
                 <meta name="description" content="InternX 「話題」功能模擬器 — 給技術人員預覽用的獨立 demo。" />
-                <meta name="theme-color" content="#00a6e8" />
-                <link rel="icon" href="/favicon.svg" />
+                <meta name="theme-color" content="#0182fd" />
+                <link rel="icon" href="/internx-logo-square.svg" />
             </Head>
             <Component {...pageProps} />
         </>

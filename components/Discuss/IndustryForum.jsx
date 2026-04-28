@@ -42,7 +42,7 @@ function ExpertRow({ user }) {
                     width: 36,
                     height: 36,
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #00a6e8, #ffb700)",
+                    background: "linear-gradient(135deg, #0182fd, #e2a200)",
                     color: "white",
                     display: "flex",
                     alignItems: "center",
@@ -426,8 +426,7 @@ export default function IndustryForum({
                                             <BadgeRow
                                                 badges={t.authorBadges}
                                                 brand={t.authorBrand}
-                                                size="small"
-                                                limit={2}
+                                                variant="icon"
                                             />
                                         )}
                                     </div>

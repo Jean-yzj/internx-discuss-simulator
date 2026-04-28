@@ -316,7 +316,7 @@
 }
 
 .notice {
-    background: rgba(0,166,232,0.08);
+    background: rgba(1,130,253,0.08);
     color: var(--theme-color);
     border-radius: 12px;
     padding: 12px 14px;

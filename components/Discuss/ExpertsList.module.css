@@ -3,7 +3,7 @@
     min-height: calc(100vh - var(--top-bar-height));
     padding: 36px 20px 80px;
     background:
-        radial-gradient(900px 400px at 50% -10%, rgba(14,165,233,0.10), transparent 60%),
+        radial-gradient(900px 400px at 50% -10%, rgba(1,130,253,0.10), transparent 60%),
         var(--background-color-blank);
 }
 
@@ -28,7 +28,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(14,165,233,0.10);
+    background: rgba(1,130,253,0.10);
     color: #0c4a6e;
     padding: 5px 12px;
     border-radius: 999px;
@@ -204,7 +204,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00a6e8, #ffb700);
+    background: linear-gradient(135deg, #0182fd, #e2a200);
     color: white;
     font-weight: 800;
     display: flex;

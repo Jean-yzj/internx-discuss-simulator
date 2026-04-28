@@ -428,8 +428,7 @@ export default function DiscussList({
                                                 <BadgeRow
                                                     badges={t.authorBadges}
                                                     brand={t.authorBrand}
-                                                    size="small"
-                                                    limit={2}
+                                                    variant="icon"
                                                 />
                                             )}
                                         </div>

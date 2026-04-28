@@ -21,7 +21,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: linear-gradient(135deg, #00a6e8, #0091cb);
+    background: linear-gradient(135deg, #0182fd, #1861a8);
     color: white;
     font-size: 11px;
     font-weight: 800;
@@ -81,7 +81,7 @@
 .optionBtn:hover {
     border-color: var(--theme-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(0,166,232,0.15);
+    box-shadow: 0 4px 14px rgba(1,130,253,0.15);
 }
 
 .optionEmoji {
@@ -122,19 +122,19 @@
 
 .resultOption.myChoice {
     border-color: var(--theme-color);
-    background: rgba(0,166,232,0.08);
+    background: rgba(1,130,253,0.08);
 }
 
 .resultBar {
     position: absolute;
     inset: 0;
-    background: rgba(0,166,232,0.10);
+    background: rgba(1,130,253,0.10);
     transform-origin: left;
     transition: width .6s cubic-bezier(.2,.8,.2,1);
     z-index: 0;
 }
 .resultOption.myChoice .resultBar {
-    background: rgba(0,166,232,0.18);
+    background: rgba(1,130,253,0.18);
 }
 
 .resultContent {

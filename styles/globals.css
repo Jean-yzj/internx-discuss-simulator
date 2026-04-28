@@ -1,32 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+/*
+ * Globals — copied from the InternX main site (page-styles/globals.css)
+ * so the simulator visually matches the production platform 1:1.
+ *
+ * Anything we add here for the simulator only is at the bottom under
+ * the "── Simulator additions" comment.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sanchez:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200;300;400;500;600&display=swap");
 
 :root {
-    --font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    --font-family: "Poppins", "Noto Sans TC", sans-serif;
     --font-size: 120px;
+    --border-radius: 10px;
+
     --top-bar-height: 64px;
-    --theme-color: #00a6e8;
-    --theme-color-dark: #0091cb;
-    --theme-light: #3dc8ff;
-    --theme-white: #d7f4ff;
-    --complementary-color: #ffb700;
-    --background-color-blank: #ffffff;
-    --background-color-gray: #f4f4f4;
-    --border-color: #ececec;
-    --text-color: #1a1a1a;
+    --deck-card-width: 400px;
+
+    --theme-white: #deefff;
+    --theme-light: #5aafff;
+    --theme-color: #0182fd;
+    --theme-color-dark: #1861a8;
+    --theme-color-black: #004aad;
+
+    --complementary-white: #fff8e7;
+    --complementary-color: #e2a200;
+
+    --link-color: #c35500;
+    --link-color-white: #ffe0c9;
+    --link-color-dark: #9b5000;
+    --confirm-color: #00c100;
+    --cancel-color: #d80f0f;
+    --background-color-blank: white;
+    --background-color-theme: #fff6ef;
+    --background-color-gray: #f9f9f9;
+    --background-color-hover: rgba(0, 0, 0, 0.1);
+
+    --focus-outline: 2px solid black;
+
+    /* Accents the simulator uses (not in main site, only in Badge / brand
+       callouts). Keep these names distinct from --theme-* to avoid
+       collisions if/when we port back. */
     --muted-color: #6b7280;
+    --border-color: #e5e5e5;
+    --text-color: #1a1a1a;
+}
+
+html, #root, #__next {
+    overflow-x: hidden;
+}
+
+html {
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    background-color: var(--background-color-blank);
 }
 
 * {
     box-sizing: border-box;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    scroll-behavior: smooth;
 }
 
-html, body, #__next {
-    padding: 0;
-    margin: 0;
-    background: var(--background-color-blank);
-    color: var(--text-color);
-    font-family: var(--font-family);
-    -webkit-font-smoothing: antialiased;
+*::selection {
+    background-color: var(--complementary-color);
+    color: white;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -35,6 +85,8 @@ button { font-family: inherit; }
 @media (max-width: 600px) {
     :root { --font-size: 110px; }
 }
+
+/* Simulator additions ────────────────────────────────────────────── */
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }

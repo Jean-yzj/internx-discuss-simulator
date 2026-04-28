@@ -277,28 +277,28 @@
 }
 
 .categoryChip {
+    /* Capsule tab pattern (matches InternX Featured page tabs) */
     appearance: none;
-    border: 1px solid #e0e0e0;
-    background: white;
-    color: #444;
-    padding: 7px 14px;
-    border-radius: 999px;
+    border: none;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 8px 20px;
+    border-radius: 50px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all .15s ease;
+    transition: all 0.2s ease;
     font-family: inherit;
 }
 .categoryChip:hover {
-    border-color: var(--accent, var(--theme-color));
-    color: var(--accent, var(--theme-color));
+    background-color: #e5e7eb;
 }
 .categoryChipActive {
-    background: var(--accent, var(--theme-color));
+    background-color: var(--accent, var(--theme-color));
     color: white;
-    border-color: var(--accent, var(--theme-color));
+    font-weight: 600;
 }
-.categoryChipActive:hover { color: white; }
+.categoryChipActive:hover { color: white; background-color: var(--accent, var(--theme-color)); }
 
 .topicList {
     display: flex;

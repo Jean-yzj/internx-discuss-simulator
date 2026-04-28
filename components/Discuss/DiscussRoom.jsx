@@ -394,7 +394,7 @@ export default function DiscussRoom({ topicId }) {
                                     <div className={styles.authorRow}>
                                         <span className={styles.authorName}>{r.authorName}</span>
                                         {Array.isArray(r.authorBadges) && r.authorBadges.length > 0 && (
-                                            <BadgeRow badges={r.authorBadges} brand={r.authorBrand} size="small" />
+                                            <BadgeRow badges={r.authorBadges} brand={r.authorBrand} variant="icon" />
                                         )}
                                     </div>
                                     {r.authorBrand && <BrandCallout brand={r.authorBrand} />}

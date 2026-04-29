@@ -19,7 +19,7 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #e5e5e5;
-    padding: 0 max(16px, calc((100vw - 1100px) / 2));
+    padding: 0 max(16px, calc((100vw - 1000px) / 2));
 }
 
 .left {
@@ -48,13 +48,13 @@
     height: 100%;
     display: flex;
     align-items: center;
-    padding-left: 12px;
+    padding-left: 16px;
 }
 
 .navIcons {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 4px;
 }
 
 .navItem {
@@ -62,8 +62,8 @@
     background: white;
     border: none;
     color: #555;
-    height: var(--top-bar-height);
-    padding: 0 14px;
+    height: 36px;
+    padding: 0 12px;
     font-size: 14px;
     font-weight: 500;
     font-family: inherit;
@@ -72,16 +72,20 @@
     align-items: center;
     gap: 6px;
     text-decoration: none;
-    border-bottom: 2px solid transparent;
+    border-radius: 20px;
     transition: 0.15s;
 }
 .navItem:hover {
-    color: var(--theme-color);
+    background-color: #f5f5f5;
 }
 .navItemActive {
-    color: var(--theme-color);
-    border-bottom-color: var(--theme-color);
+    color: white;
+    background-color: var(--theme-color);
     font-weight: 600;
+}
+.navItemActive:hover {
+    background-color: var(--theme-color);
+    opacity: 0.92;
 }
 
 .right {
@@ -90,17 +94,17 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .simChip {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: var(--theme-white);
-    color: var(--theme-color-dark);
-    border: 1px solid rgba(1,130,253,0.30);
-    padding: 4px 10px;
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    padding: 4px 9px;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 600;
@@ -112,7 +116,7 @@
     height: 7px;
     border-radius: 50%;
     background: var(--theme-color);
-    box-shadow: 0 0 0 4px rgba(1,130,253,0.18);
+    box-shadow: 0 0 0 3px rgba(1,130,253,0.14);
     animation: pulse 1.6s ease-in-out infinite;
 }
 @keyframes pulse {
@@ -135,6 +139,7 @@
     gap: 8px;
     font-family: inherit;
     transition: 0.15s;
+    max-width: 260px;
 }
 .userPill:hover {
     border-color: var(--theme-color);
@@ -249,9 +254,13 @@
     font-family: inherit;
     font-size: 13px;
     transition: 0.15s;
-    min-width: 180px;
+    min-width: 210px;
 }
-.searchTrigger:hover { border-color: var(--theme-color); color: var(--theme-color); }
+.searchTrigger:hover {
+    border-color: var(--theme-color);
+    color: var(--theme-color);
+    box-shadow: 0 2px 8px rgba(1,130,253,0.08);
+}
 .searchTrigger i { font-size: 16px; }
 .searchTriggerText { flex: 1; text-align: left; color: #9ca3af; }
 
@@ -361,9 +370,9 @@
 
 .rolePill {
     appearance: none;
-    border: 1px dashed #c7d2fe;
-    background: rgba(99,102,241,0.06);
-    color: #4338ca;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #4b5563;
     padding: 6px 10px;
     border-radius: 999px;
     font-size: 12px;
@@ -373,10 +382,12 @@
     align-items: center;
     gap: 6px;
     font-family: inherit;
-    transition: background .15s ease;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
 .rolePill:hover {
-    background: rgba(99,102,241,0.12);
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #111827;
 }
 
 .roleMenu {

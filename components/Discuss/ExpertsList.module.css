@@ -2,9 +2,7 @@
     width: 100%;
     min-height: calc(100vh - var(--top-bar-height));
     padding: 36px 20px 80px;
-    background:
-        radial-gradient(900px 400px at 50% -10%, rgba(1,130,253,0.10), transparent 60%),
-        var(--background-color-blank);
+    background: var(--background-color-blank);
 }
 
 .inner {

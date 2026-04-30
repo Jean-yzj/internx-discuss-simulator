@@ -1,34 +1,71 @@
+/*
+ * PollCard — bundled multi-question "投票牆" widget.
+ * Matches staging.internx.me/zh-tw/dashboard/needs-wall layout: one card,
+ * one title, total-vote chip, and a stack of question blocks each with
+ * 3 vertical option rows that show emoji + label + subtitle + percentage
+ * bar + vote count.
+ */
+
 .card {
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e5e5e5;
     border-radius: var(--border-radius);
-    padding: 18px;
+    padding: 22px;
     background: white;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    transition: box-shadow .15s ease, transform .15s ease;
+    gap: 18px;
 }
-.card:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.06); }
 
 .header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 14px;
 }
 
-.badge {
+.icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius);
+    background: var(--theme-white);
+    color: var(--theme-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.titleBlock { flex: 1; min-width: 200px; }
+.title {
+    margin: 0;
+    font-size: calc(var(--font-size) / 6.5);
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+.subtitle {
+    margin: 2px 0 0 0;
+    font-size: 13px;
+    color: var(--muted-color);
+    line-height: 1.5;
+}
+
+.totalVotes {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: var(--theme-color);
-    color: white;
-    font-size: 11px;
-    font-weight: 800;
+    background: var(--theme-white);
+    color: var(--theme-color-dark);
+    border: 1px solid rgba(1,130,253,0.30);
     padding: 4px 10px;
     border-radius: 999px;
-    letter-spacing: 0.04em;
+    font-size: 12px;
+    font-weight: 600;
 }
+.totalVotes strong { font-weight: 700; }
 
 .industryChip {
     display: inline-flex;
@@ -36,138 +73,152 @@
     gap: 4px;
     background: var(--accent, #1f2937);
     color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 9px;
+    padding: 3px 10px;
     border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
-.totalVotes {
-    margin-left: auto;
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.question {
-    font-size: 18px;
-    font-weight: 800;
-    color: #111;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.questionBlock {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.optionBtn {
-    appearance: none;
-    border: 2px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: var(--border-radius);
-    padding: 14px 14px 12px;
-    cursor: pointer;
-    transition: all .18s ease;
-    text-align: left;
-    font-family: inherit;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    position: relative;
-    overflow: hidden;
-}
-.optionBtn:hover {
-    border-color: var(--theme-color);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(1,130,253,0.15);
+.questionTitle {
+    margin: 0;
+    font-size: calc(var(--font-size) / 8);
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
 }
 
-.optionEmoji {
-    font-size: 22px;
-    line-height: 1;
-}
-
-.optionLabel {
-    font-weight: 800;
-    color: #111;
-    font-size: 16px;
-}
-
-.optionSubtitle {
-    font-size: 12px;
-    color: #6b7280;
-    line-height: 1.5;
-}
-
-/* After voting — display result bars */
-.resultRow {
+.optionsList {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.resultOption {
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 12px 14px;
-    background: #f3f4f6;
-    position: relative;
-    overflow: hidden;
+.optionRow {
+    appearance: none;
+    border: 1.5px solid #e5e5e5;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    font-family: inherit;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
 }
-
-.resultOption.myChoice {
+.optionRow:hover:not(:disabled) {
     border-color: var(--theme-color);
-    background: rgba(1,130,253,0.08);
+    background: #fafcff;
 }
 
-.resultBar {
+/* When user has voted on this question, switch to "result mode" — show
+ * a horizontal progress bar layered behind the row. */
+.optionRowVoted {
+    cursor: pointer;
+    background: #fafcff;
+    border-color: #e5e5e5;
+}
+.optionRowVoted .resultBar {
     position: absolute;
     inset: 0;
-    background: rgba(1,130,253,0.10);
+    background: rgba(1,130,253,0.08);
     transform-origin: left;
-    transition: width .6s cubic-bezier(.2,.8,.2,1);
+    transition: width 0.6s cubic-bezier(.2,.8,.2,1);
     z-index: 0;
+    border-radius: calc(var(--border-radius) - 1px);
 }
-.resultOption.myChoice .resultBar {
+
+.optionRowMine {
+    border-color: var(--theme-color);
+    background: var(--theme-white);
+}
+.optionRowMine .resultBar {
     background: rgba(1,130,253,0.18);
 }
 
-.resultContent {
+.optionContent {
     position: relative;
     z-index: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
 }
 
-.resultEmoji { font-size: 20px; }
-.resultLabel {
-    font-weight: 700;
-    color: #111;
-    flex: 1;
+.optionEmoji {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
 }
-.resultSubtitle {
+
+.optionMain { flex: 1; min-width: 0; }
+.optionLabel {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.optionSubtitle {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--muted-color);
+    margin-top: 2px;
+    line-height: 1.45;
 }
-.resultPercent {
-    font-weight: 800;
-    color: var(--theme-color);
-    font-size: 18px;
-}
-.myChoiceTag {
-    font-size: 11px;
+
+.myMark {
     background: var(--theme-color);
     color: white;
+    font-size: 10px;
+    font-weight: 700;
     padding: 2px 8px;
     border-radius: 999px;
-    font-weight: 700;
+}
+
+.optionStats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.optionPct {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--theme-color);
+    line-height: 1;
+}
+.optionVoteCount {
+    font-size: 11px;
+    color: var(--muted-color);
+}
+
+.questionStat {
+    font-size: 11px;
+    color: var(--muted-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: -2px;
+}
+.questionStatDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #cbd5e1;
 }
 
 .footer {
@@ -175,25 +226,12 @@
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
-    color: #6b7280;
-    margin-top: 4px;
+    color: var(--muted-color);
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.changeBtn {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--theme-color);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-    font-family: inherit;
-}
-.changeBtn:hover { text-decoration: underline; }
-
 @media (max-width: 600px) {
-    .options { grid-template-columns: 1fr; }
+    .card { padding: 18px; }
+    .optionRow { padding: 10px 12px; }
 }

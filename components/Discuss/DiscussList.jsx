@@ -92,9 +92,16 @@ export default function DiscussList({
         (async () => {
             try {
                 const painPointIds = (profile?.painPoints?.painPoints || []).map((p) => p.id);
-                const pollVotes = Object.entries(profile?.pollVotes || {}).map(
-                    ([pollId, choice]) => ({ pollId, choice })
-                );
+                // Flatten pollVotes shape { [pollId]: { [questionId]: optionId } }
+                // → [{ pollId, questionId, optionId }] for the recommendation API
+                const pollVotes = [];
+                for (const [pollId, qMap] of Object.entries(profile?.pollVotes || {})) {
+                    if (qMap && typeof qMap === "object") {
+                        for (const [questionId, optionId] of Object.entries(qMap)) {
+                            pollVotes.push({ pollId, questionId, optionId });
+                        }
+                    }
+                }
                 const res = await fetch("/api/discuss/recommendations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -148,12 +155,16 @@ export default function DiscussList({
         <div className={styles.page}>
             <div className={styles.inner}>
                 <div className={styles.hero}>
-                    <p className={styles.greeting}>{greeting}，{profile?.displayName || "同學"}</p>
+                    <p className={styles.greeting}>
+                        {greeting}，{profile?.displayName || "同學"} · 話題牆
+                    </p>
                     <h1 className={styles.heroTitle}>
-                        你訂閱的<span className={styles.heroAccent}>{myIndustries.length}</span>個論壇
+                        大家最近在<span className={styles.heroAccent}>關心什麼</span>？
                     </h1>
                     <p className={styles.heroSubtitle}>
-                        看看{myIndustries.map((i) => i.label).join("、")}的同行學長姐、實習生、面試者最近在聊什麼。
+                        投下你的需求，我們會根據大家的選擇媒合資源、活動與解決方案。
+                        <br />
+                        你訂閱了 <strong>{myIndustries.length}</strong> 個論壇：{myIndustries.map((i) => i.label).join("、")}
                     </p>
                     <div className={styles.actions}>
                         <button className={styles.primaryBtn} onClick={() => setShowNewTopic(true)} type="button">
@@ -303,7 +314,7 @@ export default function DiscussList({
                                 <PollCard
                                     key={p.id}
                                     poll={p}
-                                    myChoice={profile?.pollVotes?.[p.id]}
+                                    myVotes={profile?.pollVotes?.[p.id] || {}}
                                     userId={profile?.userId}
                                     onVoted={onPollVoted}
                                 />

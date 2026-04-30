@@ -10,7 +10,8 @@ export default function handler(req, res) {
         const body = req.body || {};
         const result = votePoll({
             pollId: id,
-            choice: body.choice,
+            questionId: body.questionId,
+            optionId: body.optionId,
             userId: body.userId,
         });
         return res.status(200).json({ ok: true, ...result });

@@ -49,7 +49,7 @@ export default function PollsList({ profile, onPollVoted }) {
                             <PollCard
                                 key={p.id}
                                 poll={p}
-                                myChoice={profile?.pollVotes?.[p.id]}
+                                myVotes={profile?.pollVotes?.[p.id] || {}}
                                 userId={profile?.userId}
                                 onVoted={onPollVoted}
                             />

@@ -62,3 +62,19 @@ components/
 Built as a self-contained simulator for one feature. Swap `lib/store.js`
 for a real backend (Postgres, Firestore, etc.) if you ever want to take
 this past demo.
+
+## Internal accounting tool
+
+This repo now also includes an internal accounting form at `http://localhost:3000/accounting`.
+
+Set these environment variables before using the Notion sync:
+
+```bash
+NOTION_TOKEN=secret_xxx
+NOTION_ACCOUNTING_DATA_SOURCE_ID=26a01840-88bc-8101-8a2f-000bfeb2a44f
+# optional: map submitter email/name to Notion user ids
+NOTION_USER_MAP_JSON='{"someone@internx.ai":"00000000-0000-0000-0000-000000000000"}'
+```
+
+The form syncs into the Notion data source `公司帳目 (新)` and currently stores
+receipt attachments as external URLs.
